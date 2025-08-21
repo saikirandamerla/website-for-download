@@ -22,12 +22,12 @@ export default function App() {
     {
       icon: <Lock size={32}  color="#e5e7eb" />,
       title: "End to End Encryption",
-      desc: "Your messages are kept safe using asymmetric encryption. This means there are two keys: one public (to lock/encrypt the data) and one private (to unlock/decrypt it). Because of the complex math behind it, hackers cannot realistically break it—making your communication secure",
+      desc: "This security model relies on a pair of keys: one public for encryption and one private for decryption. The advanced mathematics behind this process makes it virtually impossible to compromise, ensuring that your communication remains private, secure, and trustworthy.",
     },
     {
       icon: <Smartphone size={32} color="#e5e7eb" />,
       title: "Why Adjunct?",
-      desc: "A next-generation messaging experience powered by intelligence that adapts to you. It transforms everyday interactions into something smarter, smoother, and more intuitive—helping you stay ahead with less effort. Discover a new way to connect.",
+      desc: "Adjunct is redefining what it means to connect in the digital age. With intelligence at its core, it transforms everyday communication into something fluid, intuitive, and forward-looking. No noise, no barriers—just a smarter, simpler way to interact and move forward. Discover the next chapter in human connection.",
     },
   ];
 
@@ -37,17 +37,17 @@ export default function App() {
       icon: <Brain size={32} color="#e5e7eb" />,
       title: "AI-Powered Interface",
       image: "./assets/Screenshot_2025-08-15_175401-removebg-preview.png",
-      desc: "Experience the future of messaging with our intelligent AI interface. Seamlessly integrated AI that understands context, learns your preferences, and adapts to your communication style.",
+      desc: "Experience the future of communication with Adjunct, a platform designed to transform the way people connect. Built with intelligence at its core, it creates a seamless environment where conversations flow effortlessly, distractions fade away, and every interaction feels natural. More than just technology, it’s a new standard for how communication should be—smarter, faster, and truly human.",
     },
     {
       icon: <Command size={32} color="#e5e7eb" />,
       title: "Custom Commands",
-      desc: "Execute powerful commands with natural language. Send emails, search the web, set reminders, and automate tasks using simple text commands.",
+      desc: 'Adjunct makes technology effortless by turning simple language into meaningful action. Just say what you need—and it’s done, making work smarter, smoother, and seamless.',
     },
     {
       icon: <RefreshCw size={32} color="#e5e7eb" />,
       title: "Real-time Sync",
-      desc: "Instant synchronization across all your devices. Your conversations, settings, and AI preferences stay in sync wherever you go.",
+      desc: "Your conversations, preferences, and settings follow you wherever you go—ensuring a consistent, uninterrupted experience whether you’re on any mobile device. ",
     },
     
   ];
@@ -202,10 +202,16 @@ const [reviewData, setReviewData] = useState({ name: "", review: "" });
       boxShadow: "0 2px 4px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2)",
     },
     heroWrapper: {
-      maxWidth: "800px",
-      margin: "0 auto",
-      padding: "0 1rem",
-    },
+  maxWidth: "800px",
+  margin: "0 auto",
+  padding: "0 5rem",
+  minHeight: "calc(100vh - 64px - 2rem)", 
+  display: "flex",
+  justifyContent: "center",  // horizontal center
+  alignItems: "center",      // vertical center
+  textAlign: "center"        // optional: center text
+},
+
     hero: {
       paddingTop: "2rem",
       paddingBottom: "2rem",
@@ -577,7 +583,8 @@ const [reviewData, setReviewData] = useState({ name: "", review: "" });
     email: '',
     phone: '',
     reason: '',
-    referral: ''
+    referral: '',
+    review: '',
   });
 
   // Check if screen is mobile
@@ -837,12 +844,6 @@ setReviewData({review: '', });
   const closeMobileMenu = () => {
     setMobileMenuOpen(false);
   };
-
- 
-
-
-
-  // Close mobile menu on escape key
   React.useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === 'Escape' && mobileMenuOpen) {
@@ -850,7 +851,7 @@ setReviewData({review: '', });
       }
     };
 
-    document.addEventListener('keydown', handleEscape);
+    document.addEventListener('keydown', handleEscape);  
     return () => document.removeEventListener('keydown', handleEscape);
   }, [mobileMenuOpen]);
 
@@ -923,23 +924,7 @@ setReviewData({review: '', });
             {/* Desktop Navigation */}
             {!isMobileView && (
               <nav style={styles.nav}>
-                <a 
-                  style={{...styles.navLink, cursor: "pointer"}}
-                  onClick={() => setShowDocsPage(true)}
-                >
-                  Manual
-                </a>
-                <a 
-                  style={{...styles.navLink, cursor: "pointer"}}
-                  onClick={() => {
-                    const whatsNewSection = document.getElementById('whats-new');
-                    if (whatsNewSection) {
-                      whatsNewSection.scrollIntoView({ behavior: 'smooth' });
-                    }
-                  }}
-                >
-                  About
-                </a>
+                            
                 <a 
                   style={{...styles.navLink, cursor: "pointer"}}
                   onClick={() => document.querySelector('footer').scrollIntoView({ behavior: 'smooth' })}
@@ -985,30 +970,6 @@ setReviewData({review: '', });
             style={styles.mobileMenu}
           >
             <div style={styles.mobileNav}>
-              <a 
-                style={{...styles.mobileNavLink, cursor: "pointer"}}
-                onClick={() => {
-                  closeMobileMenu();
-                  setShowDocsPage(true);
-                }}
-              >
-                Manual
-              </a>
-              <a href="#features" style={styles.mobileNavLink} onClick={closeMobileMenu}>
-                Features
-              </a>
-              <a 
-                style={{...styles.mobileNavLink, cursor: "pointer"}}
-                onClick={() => {
-                  closeMobileMenu();
-                  const whatsNewSection = document.getElementById('whats-new');
-                  if (whatsNewSection) {
-                    whatsNewSection.scrollIntoView({ behavior: 'smooth' });
-                  }
-                }}
-              >
-                About
-              </a>
               <a 
                 style={{...styles.mobileNavLink, cursor: "pointer"}}
                 onClick={() => {
@@ -1071,9 +1032,8 @@ setReviewData({review: '', });
           ))}
         </section>
 <div id="whats-new" style={{ textAlign: "center", marginBottom: "2rem", fontFamily: "kreon, serif" }}>
-  <h1 >whats new?</h1>
-  <p>Adjunct is the new messanging app ,which has the AI intelligence and perform the action unlike the other.
-    It performs the tasks like the messaging,searching, custom commands like send emails and other things.
+  <h1 >Features</h1>
+  <p>Adjunct isn’t just another chat tool—it’s an intelligent companion designed to make every conversation effortless and secure. You can exchange messages that feel natural and fluid, while advanced intelligence helps you craft the perfect response, keep track of what matters, and simplify your day-to-day interactions. Every message you share is wrapped in strong protection, ensuring your privacy remains untouched. The platform adapts to you—learning, guiding, and assisting—so your conversations become more engaging, interactive, and truly your own.
   </p>
 </div>
 
@@ -1127,42 +1087,6 @@ setReviewData({review: '', });
             ))}
           </div>
         </section>
-
-        {/* ABOUT US SECTION */}
-        <div id="whats-new" style={{ textAlign: "center", marginBottom: "2rem", fontFamily: "kreon, serif" }}>
-          <h1 style={{ color: "#f5f5f5", fontSize: "2.5rem", marginBottom: "1.5rem" }}>About Us</h1>
-          <div style={{ maxWidth: "800px", margin: "0 auto", textAlign: "left" }}>
-            <h2 style={{ color: "#f5f5f5", fontSize: "1.8rem", marginBottom: "1rem" }}>🎉 Adjunct - Worlds First Ai Communication platform</h2>
-            
-            <p style={{ fontSize: "1.1rem", lineHeight: "1.6", color: "#ccc", marginBottom: "1.5rem" }}>
-              We are glad to announce the successful completion of our web development project for <strong style={{ color: "#22c55e" }}>Adjunct</strong>.
-            </p>
-
-            
-            <div style={{ backgroundColor: "#1a1a1a", padding: "1.5rem", borderRadius: "8px", border: "1px solid #333", marginBottom: "1.5rem" }}>
-              <h3 style={{ color: "#f5f5f5", fontSize: "1.3rem", marginBottom: "1rem" }}>🚀 Our Journey</h3>
-              <p style={{ color: "#ccc", lineHeight: "1.6", marginBottom: "1rem" }}>
-                We started our journey as a team of two passionate individuals who shared the vision of creating impactful projects and exploring new ideas. As students, we began with web development, building small projects that, although not fully successful, laid the foundation for our technical skills and boosted our confidence. These early experiences taught us that with persistence, we could learn and build anything practically, even with free resources.
-              </p>
-              <p style={{ color: "#ccc", lineHeight: "1.6" }}>
-              With this vision, we created our first website and launched it. However, it did not receive the expected response, and we encountered several technical challenges and bugs. Instead of seeing this as a failure, we treated it as a learning step and moved forward.
-              </p>
-              <p style={{ color: "#ccc", lineHeight: "1.6" }}>
-              As our team grew with the addition of a new member, we expanded our vision. We experimented with creating a user-friendly WhatsApp bot, though we faced challenges with verification and scalability. This pushed us to think differently — to build a standalone messaging platform that users could personalize, offering both convenience and privacy while integrating AI as a personal assistant.
-              </p>
-              <p style={{ color: "#ccc", lineHeight: "1.6" }}>
-              This marks our journey so far: from experimenting with early projects, to envisioning and building Adjunct, and continuously learning, improving, and adapting to create a product that truly helps people manage their work and lives more effectively.
-              </p>
-            </div>
-            
-            <div style={{ textAlign: "center", marginTop: "2rem", fontFamily: "kreon, serif" }}>
-              <p style={{ color: "#22c55e", fontSize: "1.1rem", fontStyle: "italic" }}>
-                "Success is not final, failure is not fatal: it is the courage to continue that counts." - Winston Churchill
-              </p>
-            </div>
-          </div>
-        </div>
-{/* Review box */}
 {/* REVIEW SECTION */}
 <div 
   style={{ 
