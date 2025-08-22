@@ -741,6 +741,15 @@ const [reviewData, setReviewData] = useState({ name: "", review: "" });
 
   const responsiveStyles = React.useMemo(() => getResponsiveStyles(), [isMobileView]);
 
+  const [text, setText] = useState("");
+  const [encrypted, setEncrypted] = useState("");
+
+  const handleEncrypt = () => {
+    // Simple base64 encoding as demo encryption
+    if (text.trim() === "") return;
+    setEncrypted(btoa(text));
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -1036,6 +1045,56 @@ setReviewData({review: '', });
   <p>Adjunct isn’t just another chat tool—it’s an intelligent companion designed to make every conversation effortless and secure. You can exchange messages that feel natural and fluid, while advanced intelligence helps you craft the perfect response, keep track of what matters, and simplify your day-to-day interactions. Every message you share is wrapped in strong protection, ensuring your privacy remains untouched. The platform adapts to you—learning, guiding, and assisting—so your conversations become more engaging, interactive, and truly your own.
   </p>
 </div>
+
+<div style={{ textAlign: "center", fontFamily: "kreon, serif" }}>
+  <h2 >Try Our Simple Encryption Tool</h2>
+      <div style={{ marginTop: "2rem" }}>
+        <input
+          type="text"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder="Enter text to encrypt"
+          style={{
+            padding: "0.5rem",
+            borderRadius: "8px",
+            border: "1px solid #ccc",
+            width: "250px",
+            marginRight: "10px",
+          }}
+        />
+        <button
+          onClick={handleEncrypt}
+          style={{
+            padding: "0.5rem 1rem",
+            borderRadius: "8px",
+            border: "none",
+            backgroundColor: "#ffffffff",
+            color: "black",
+            cursor: "pointer",
+          }}
+        >
+          Encrypt
+        </button>
+      </div>
+
+      {encrypted && (
+       <div
+  style={{
+    marginTop: "2rem",
+    fontWeight: "bold",
+    marginLeft: "10px",
+    padding: "8px 12px",
+    border: "1px solid #ccc",   // ✅ proper border
+    borderRadius: "8px",        // optional rounded corners
+    display: "inline-block"     // keeps it neat around text
+  }}
+>
+  🔐 Encrypted Text:{" "}
+  <span style={{ color: "#22c55e" }}>{encrypted}</span>
+</div>
+
+      )}
+      </div>
 
         {/* SECOND FEATURES SQUARE-LIKE LAYOUT */}
         <section style={responsiveStyles.secondFeaturesContainer}>
