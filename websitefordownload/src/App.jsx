@@ -1249,7 +1249,7 @@ setReviewData({review: '', });
                 position: "absolute",
                 left: "50%",
                 top: isMobileView ? "13%" : "75%",
-                transform: isMobileView ? "translate(-50%, -50%)" : "translate(-50%, -335%)" ,
+                transform: isMobileView ? "translate(-50%, -50%)" : "translate(-50%, -265%)" ,
               }} 
               onClick={(e) => e.stopPropagation()}
             >
