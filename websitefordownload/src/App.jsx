@@ -1160,11 +1160,11 @@ setReviewData({review: '', });
   }}
 >
   <h2 style={{ color: "#f5f5f5", fontSize: "2rem", marginBottom: "1rem" }}>
-    ⭐ Share Your Review
+    ⭐ Share Your Suggestions
   </h2>
   <p style={{ color: "#ccc", marginBottom: "1.5rem" }}>
     We'd love to hear your thoughts about <strong style={{ color: "#22c55e" }}>Adjunct</strong>.  
-    Your feedback helps us improve and grow.
+    we need your help us improve and grow.
   </p>
 
   <form onSubmit={(e) => { e.preventDefault(); alert("Thank you for your review!"); }}>
@@ -1249,7 +1249,7 @@ setReviewData({review: '', });
                 position: "absolute",
                 left: "50%",
                 top: isMobileView ? "13%" : "75%",
-                transform: isMobileView ? "translate(-50%, -50%)" : "translate(-50%, -265%)" ,
+                transform: isMobileView ? "translate(-50%, -50%)" : "translate(-50%, -325%)" ,
               }} 
               onClick={(e) => e.stopPropagation()}
             >
