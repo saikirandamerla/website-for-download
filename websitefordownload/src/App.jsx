@@ -275,17 +275,16 @@ const [reviewData, setReviewData] = useState({ name: "", review: "" });
       margin: "1rem 0",
     },
     popupOverlay: {
-      position: "fixed",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: "rgba(0, 0, 0, 0.8)",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      zIndex: 1000,
-      marginTop: "-150px",
+  position: "fixed",
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: "rgba(0, 0, 0, 0.8)",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "flex-start", // align popup to top
+  zIndex: 1000,
     },
     popupForm: {
       backgroundColor: "#0d0d0d",
@@ -1242,17 +1241,17 @@ setReviewData({review: '', });
       {/* POPUP FORM */}
       {showPopup && (
         <div style={styles.popupOverlay} onClick={handleClosePopup}>
-                      <div 
-              className="popup-form"
-              style={{
-                ...responsiveStyles.popupForm,
-                position: "absolute",
-                left: "50%",
-                top: isMobileView ? "13%" : "75%",
-                transform: isMobileView ? "translate(-50%, -50%)" : "translate(-50%, -325%)" ,
-              }} 
-              onClick={(e) => e.stopPropagation()}
-            >
+          <div 
+            className="popup-form"
+            style={{
+              ...responsiveStyles.popupForm,
+              position: "absolute",
+              left: "50%",
+              top: "32px", // Just below the header
+              transform: "translateX(-50%)", // Center horizontally only
+            }} 
+            onClick={(e) => e.stopPropagation()}
+          >
             <h2 style={responsiveStyles.popupTitle}>Join the Waitlist</h2>
             <form onSubmit={handleSubmit}>
               <div style={styles.formGroup}>
@@ -1290,7 +1289,7 @@ setReviewData({review: '', });
                 />
               </div>
               <div style={styles.formGroup}>
-                <label style={styles.formLabel} htmlFor="phone">Phone Number (Optional)</label>
+                <label style={styles.formLabel} htmlFor="phone">Phone Number</label>
                 <input
                   type="tel"
                   id="phone"
