@@ -438,6 +438,8 @@ const [reviewData, setReviewData] = useState({ name: "", review: "" });
       alignItems: "center",
       gap: "1.5rem",
       borderRadius: 0,
+      transform: "scale(1)",
+      transition: "all 0.3s ease-in-out",
     },
     bigBlockImage: {
       flex: 1,
@@ -467,6 +469,8 @@ const [reviewData, setReviewData] = useState({ name: "", review: "" });
       flexDirection: "column",
       justifyContent: "center",
       borderRadius: 0,
+      transform: "scale(1)",
+      transition: "all 0.3s ease-in-out",
     },
 
     // Mobile-specific styles
