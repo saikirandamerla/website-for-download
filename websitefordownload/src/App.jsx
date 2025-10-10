@@ -742,11 +742,78 @@ const [reviewData, setReviewData] = useState({ name: "", review: "" });
 
   const [text, setText] = useState("");
   const [encrypted, setEncrypted] = useState("");
+  const [isEncrypting, setIsEncrypting] = useState(false);
+  const [encryptedAt, setEncryptedAt] = useState(null);
+  const [copied, setCopied] = useState(false);
 
   const handleEncrypt = () => {
-    // Simple base64 encoding as demo encryption
-    if (text.trim() === "") return;
-    setEncrypted(btoa(text));
+    // Create a UTF-8 safe base64 encoder
+    const utf8ToB64 = (str) => {
+      try {
+        const uint8 = new TextEncoder().encode(str);
+        let binary = "";
+        for (let i = 0; i < uint8.length; i++) {
+          binary += String.fromCharCode(uint8[i]);
+        }
+        return btoa(binary);
+      } catch (err) {
+        // Fallback to simple btoa if TextEncoder isn't available
+        try {
+          return btoa(str);
+        } catch (e) {
+          console.error('Base64 encode failed:', e);
+          return '';
+        }
+      }
+    };
+
+    // Generate a short random nonce (hex) using crypto API
+    const generateNonce = (length = 8) => {
+      try {
+        const arr = new Uint8Array(length);
+        window.crypto.getRandomValues(arr);
+        return Array.from(arr).map((b) => b.toString(16).padStart(2, '0')).join('');
+      } catch (err) {
+        // fallback to Math.random
+        let s = '';
+        for (let i = 0; i < length; i++) s += Math.floor(Math.random() * 256).toString(16).padStart(2, '0');
+        return s;
+      }
+    };
+
+    // Ensure non-empty input
+    if (text.trim() === '') return;
+    setIsEncrypting(true);
+    setCopied(false);
+
+    // Simulate a short processing delay for UX and create a unique payload
+    setTimeout(() => {
+      try {
+        const nonce = generateNonce(8);
+        const timestamp = new Date().toISOString();
+        // Combine original text with nonce and timestamp so repeated encryptions produce different outputs
+        const payload = JSON.stringify({ text, nonce, timestamp });
+        const encoded = utf8ToB64(payload);
+        setEncrypted(encoded);
+        setEncryptedAt(new Date().toLocaleString());
+      } catch (err) {
+        console.error('Encryption error:', err);
+        setEncrypted('');
+      } finally {
+        setIsEncrypting(false);
+      }
+    }, 250);
+  };
+
+  const handleCopyEncrypted = async () => {
+    if (!encrypted) return;
+    try {
+      await navigator.clipboard.writeText(encrypted);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Copy failed:', err);
+    }
   };
 
   const handleInputChange = (e) => {
@@ -774,70 +841,82 @@ const [reviewData, setReviewData] = useState({ name: "", review: "" });
       console.error('Error saving locally:', localError);
     }
     
-    try {
-      // Try Google Apps Script (original method)
-      const submissionData = {
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        reason: formData.reason,
-        referral: formData.referral,
-        timestamp: new Date().toISOString()
-      };
+    // Prepare data to send to Google Sheets via Apps Script
+    const submissionData = {
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      reason: formData.reason,
+      referral: formData.referral,
+      timestamp: new Date().toISOString(),
+    };
 
-// Method 1: Google Apps Script (original)
-try {
-  await fetch('https://script.google.com/macros/s/AKfycbwIrB_-BfxtQRqDLkxMvxDgbi3X17F90g0F91xIC8q7e8KgiH5eeZOOzkrc6NhemhHI/exec', {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(submissionData)   // can be formData for waitlist OR reviewData for reviews
-  });
-  console.log('Google Apps Script submission attempted');
-} catch (googleError) {
-  console.log('Google Apps Script failed:', googleError);
-}
+  // Show success popup immediately (UI feedback) and close the form
+  setShowSuccessPopup(true);
+  setShowPopup(false);
+  // Clear form fields after successful submit
+  setFormData({ name: '', email: '', phone: '', reason: '', referral: '' });
+  setReviewData({ review: '' });
 
-// Method 2: Simple email notification (works immediately)
-const emailBody = `
+    // Send to Google Apps Script in background (non-blocking)
+    (async () => {
+      const endpoint = 'https://script.google.com/macros/s/AKfycbwIrB_-BfxtQRqDLkxMvxDgbi3X17F90g0F91xIC8q7e8KgiH5eeZOOzkrc6NhemhHI/exec';
+      try {
+        // Try a normal CORS-enabled POST first
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(submissionData),
+        });
+
+        if (!res.ok) {
+          console.warn('Apps Script responded with non-OK status', res.status);
+        } else {
+          console.log('Submission stored via Apps Script (CORS POST)');
+          return;
+        }
+      } catch (err) {
+        console.warn('CORS POST to Apps Script failed, will try no-cors fallback', err);
+      }
+
+      // Fallback: try sending with no-cors (may succeed if script accepts anonymous requests)
+      try {
+        await fetch(endpoint, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(submissionData),
+        });
+        console.log('Submission attempted via Apps Script (no-cors fallback)');
+      } catch (fallbackErr) {
+        console.error('Apps Script fallback failed:', fallbackErr);
+      }
+    })();
+
+    // Optional: prepare mailto link for logging/debugging
+    const emailBody = `
 New Waitlist Signup / Review:
 
-Name: ${formData?.name || reviewData?.name || "Anonymous"}
-Email: ${formData?.email || "N/A"}
-Phone: ${formData?.phone || "N/A"}
-Reason: ${formData?.reason || "N/A"}
-Referral: ${formData?.referral || "N/A"}
-Review: ${reviewData?.review || "N/A"}
+Name: ${submissionData.name || 'Anonymous'}
+Email: ${submissionData.email || 'N/A'}
+Phone: ${submissionData.phone || 'N/A'}
+Reason: ${submissionData.reason || 'N/A'}
+Referral: ${submissionData.referral || 'N/A'}
 Timestamp: ${new Date().toLocaleString()}
 
 This submission was also saved locally in the browser.
 `;
 
-const mailtoLink = `mailto:adjunctpa@gmail.com?subject=New Submission - ${formData?.name || reviewData?.name}&body=${encodeURIComponent(emailBody)}`;
+    const mailtoLink = `mailto:adjunctpa@gmail.com?subject=New Submission - ${submissionData.name || ''}&body=${encodeURIComponent(emailBody)}`;
 
-console.log('Form submitted successfully:', formData || reviewData);
+    console.log('Form submitted (local saved) — background Apps Script upload started');
 console.log('Email link prepared:', mailtoLink);
 
-// Show success popup
-setShowSuccessPopup(true);
-setShowPopup(false);
-setFormData({ name: '', email: '', phone: '', reason: '', referral: '' });
-setReviewData({review: '', });
+    // Show success popup only (do not close the form or clear inputs)
+    setShowSuccessPopup(true);
 
-      
-      // Optionally open email client (uncomment to enable)
-      // window.open(mailtoLink);
-      
-    } catch (error) {
-      console.error('Submission error:', error);
-      
-      // Since we already saved to localStorage, we can still show success
-      setShowSuccessPopup(true);
-      setShowPopup(false);
-      setFormData({ name: '', email: '', phone: '', reason: '', referral: '' });
-    }
+    // Optionally open email client (uncomment to enable)
+    // window.open(mailtoLink);
   };
 
   const handleClosePopup = () => {
@@ -1076,23 +1155,25 @@ setReviewData({review: '', });
         </button>
       </div>
 
-      {encrypted && (
-       <div
-  style={{
-    marginTop: "2rem",
-    fontWeight: "bold",
-    marginLeft: "10px",
-    padding: "8px 12px",
-    border: "1px solid #ccc",   // ✅ proper border
-    borderRadius: "8px",        // optional rounded corners
-    display: "inline-block"     // keeps it neat around text
-  }}
->
-  🔐 Encrypted Text:{" "}
-  <span style={{ color: "#22c55e" }}>{encrypted}</span>
-</div>
-
-      )}
+      <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+        {isEncrypting ? (
+          <div style={{ color: '#ccc' }}>Encrypting…</div>
+        ) : encrypted ? (
+          <div style={{ display: 'inline-block', textAlign: 'left' }}>
+            <div style={{ fontWeight: '700', marginBottom: '0.5rem' }}>🔐 Encrypted Text</div>
+            <div style={{ padding: '8px 12px', border: '1px solid #ccc', borderRadius: 8, background: '#0b0b0b', color: '#22c55e', fontFamily: 'monospace' }}>
+              {encrypted}
+            </div>
+            <div style={{ marginTop: '0.5rem', display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+              <button onClick={handleCopyEncrypted} style={{ padding: '6px 10px', borderRadius: 6, border: 'none', cursor: 'pointer' }}>{copied ? 'Copied' : 'Copy'}</button>
+              <button onClick={() => { setEncrypted(''); setText(''); }} style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #444', background: 'transparent', color: '#fff', cursor: 'pointer' }}>Clear</button>
+            </div>
+            {encryptedAt && <div style={{ marginTop: '0.5rem', color: '#888', fontSize: '0.85rem' }}>Encrypted at: {encryptedAt}</div>}
+          </div>
+        ) : (
+          <div style={{ color: '#777' }}>Enter text above and click Encrypt to create an encrypted string.</div>
+        )}
+      </div>
       </div>
 
         {/* SECOND FEATURES SQUARE-LIKE LAYOUT */}
@@ -1180,7 +1261,6 @@ setReviewData({review: '', });
           color: "#f5f5f5",
           resize: "none"
         }}
-        required
       />
     </div>
     <div style={{ display: "flex", justifyContent: "center", gap: "1rem" }}>
