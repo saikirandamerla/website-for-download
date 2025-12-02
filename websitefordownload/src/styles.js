@@ -1,0 +1,883 @@
+const fontFamily = "'Outfit', sans-serif";
+const fontWeightNormal = "400";
+
+export const styles = {
+    container: {
+        fontFamily,
+        fontWeight: fontWeightNormal,
+        color: "#f5f5f5",
+        // backgroundColor: "#0d0d0d", // Removed to show Background component
+        position: "relative",
+        zIndex: 1,
+        margin: 0,
+        padding: 0,
+        minHeight: "100vh",
+    },
+    // Global scrollbar hiding styles
+    globalStyles: `
+    * {
+      cursor: none !important;
+    }
+    
+    .popup-form::-webkit-scrollbar {
+      display: none;
+    }
+    .popup-form {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    
+    @keyframes button3DFloat {
+      0%, 100% {
+        transform: translateY(0) rotateX(0deg);
+      }
+      50% {
+        transform: translateY(-3px) rotateX(2deg);
+      }
+    }
+    
+    .button-3d {
+      /* Animation removed to avoid conflict with new hover effects */
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .button-3d:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 114, 255, 0.4);
+    }
+    
+    .button-3d:active {
+      transform: translateY(1px);
+    }
+    
+    @keyframes popupFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes logoSpaceReveal {
+      0% {
+        opacity: 0;
+        transform: scale(0.5);
+        filter: blur(20px);
+      }
+      50% {
+        opacity: 0.8;
+        transform: scale(1.1);
+        filter: blur(5px);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+        filter: blur(0px);
+      }
+    }
+    
+    .gradient-button:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 8px 20px rgba(255, 255, 255, 0.3), 0 4px 12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 1);
+    }
+    
+    .gradient-button:active {
+      transform: translateY(-1px) scale(0.98);
+      box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2), 0 2px 6px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+    
+    .gradient-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      transition: left 0.5s ease;
+    }
+    
+    .gradient-button:hover::before {
+      left: 100%;
+    }
+  `,
+    contentWrapper: {
+        maxWidth: "1100px",
+        margin: "0 auto",
+        fontFamily,
+        padding: "0 1rem",
+        overflowX: "hidden",
+        paddingTop: "104px",
+    },
+    header: {
+        borderBottom: "none",
+        backgroundColor: "rgba(10, 10, 10, 0.2)",
+        backdropFilter: "blur(12px)",
+        position: "fixed",
+        top: "20px",
+        left: "50%",
+        transform: "translateX(-50%)",
+        zIndex: 100,
+        height: "64px",
+        display: "flex",
+        alignItems: "center",
+        borderRadius: "50px",
+        maxWidth: "1000px",
+        width: "calc(100% - 40px)",
+        border: "1px solid rgba(255, 255, 255, 0.08)",
+        boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
+        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+    },
+    headerContent: {
+        margin: "0 auto",
+        padding: "0 2rem",
+        fontFamily,
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        height: "64px",
+        width: "100%",
+        maxWidth: "100%",
+    },
+    leftSection: {
+        display: "flex",
+        alignItems: "center",
+        gap: "1.5rem",
+    },
+    logo: {
+        display: "flex",
+        alignItems: "center",
+    },
+    nav: {
+        display: "flex",
+        gap: "1.25rem",
+    },
+    navLink: {
+        textDecoration: "none",
+        color: "#ccc",
+        fontSize: "0.95rem",
+        fontWeight: "500",
+    },
+    rightSection: {
+        display: "flex",
+        alignItems: "center",
+        gap: "0.75rem",
+    },
+    text: {
+        fontSize: "0.9rem",
+        color: "#ccc",
+    },
+    buttonPrimary: {
+        paddingTop: "0.85rem",
+        paddingBottom: "0.85rem",
+        paddingLeft: "2.5rem",
+        paddingRight: "2.5rem",
+        background: "linear-gradient(135deg, #00C6FF 0%, #0072FF 100%)",
+        color: "#ffffff",
+        border: "none",
+        borderRadius: "12px",
+        cursor: "pointer",
+        fontSize: "1rem",
+        fontWeight: "700",
+        height: "50px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        position: "relative",
+        transform: "translateY(0)",
+        transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        boxShadow: "0 4px 0 #0056b3, 0 8px 20px rgba(0, 114, 255, 0.4)",
+        letterSpacing: "0.03em",
+        textTransform: "uppercase",
+        textShadow: "0 1px 2px rgba(0,0,0,0.2)",
+    },
+    buttonSecondary: {
+        paddingTop: "0.75rem",
+        paddingBottom: "0.75rem",
+        paddingLeft: "1.5rem",
+        paddingRight: "1.5rem",
+        background: "rgba(255, 255, 255, 0.05)",
+        border: "1px solid rgba(255, 255, 255, 0.2)",
+        borderRadius: "12px",
+        color: "#ffffff",
+        cursor: "pointer",
+        fontSize: "0.9rem",
+        fontWeight: "600",
+        height: "44px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        position: "relative",
+        overflow: "hidden",
+        backdropFilter: "blur(10px)",
+        boxShadow: "0 4px 15px rgba(0, 0, 0, 0.2)",
+    },
+    buttonPrimaryHover: {
+        transform: "translateY(2px)",
+        boxShadow: "0 2px 0 #0056b3, 0 4px 12px rgba(0, 114, 255, 0.5)",
+    },
+    buttonPrimaryActive: {
+        transform: "translateY(4px)",
+        boxShadow: "0 0 0 #0056b3, inset 0 2px 4px rgba(0,0,0,0.3)",
+    },
+    heroWrapper: {
+        maxWidth: "800px",
+        margin: "0 auto",
+        padding: "0 5rem",
+        minHeight: "calc(100vh - 64px - 2rem)",
+        display: "flex",
+        justifyContent: "center",  // horizontal center
+        alignItems: "center",      // vertical center
+        textAlign: "center"        // optional: center text
+    },
+
+    hero: {
+        paddingTop: "2rem",
+        paddingBottom: "2rem",
+        paddingLeft: "0",
+        paddingRight: "0",
+        textAlign: "left",
+    },
+    heroTitle: {
+        fontSize: "4rem",
+        marginBottom: "1.5rem",
+        color: "#ffffff",
+        fontWeight: "700",
+        lineHeight: "1.1",
+        textShadow: "0 0 40px rgba(0, 198, 255, 0.3)",
+        letterSpacing: "-0.02em",
+    },
+    heroText: {
+        fontSize: "1.2rem",
+        marginBottom: "2rem",
+        color: "#ccc",
+    },
+    featuresGrid: {
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+        gap: "1.5rem",
+        padding: "2rem 0",
+    },
+    featureCard: {
+        backgroundColor: "rgba(255, 255, 255, 0.03)",
+        backdropFilter: "blur(12px)",
+        padding: "2rem",
+        border: "1px solid rgba(255, 255, 255, 0.08)",
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2)",
+        transition: "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+        transform: "scale(1)",
+        borderRadius: "24px",
+        position: "relative",
+        overflow: "hidden",
+    },
+    featureCardHover: {
+        transform: "translateY(-10px)",
+        backgroundColor: "rgba(255, 255, 255, 0.06)",
+        border: "1px solid rgba(255, 255, 255, 0.2)",
+        boxShadow: "0 20px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 198, 255, 0.15)",
+    },
+    featureTitle: {
+        marginTop: "1rem",
+        fontWeight: "600",
+        fontSize: "1.125rem",
+        color: "#fff",
+    },
+    featureDesc: {
+        marginTop: "0.5rem",
+        color: "#ccc",
+        whiteSpace: "pre-line",
+    },
+    footer: {
+        borderTop: "1px solid rgba(255, 255, 255, 0.1)",
+        backgroundColor: "rgba(10, 10, 10, 0.4)",
+        backdropFilter: "blur(20px)",
+        padding: "4rem 0 2rem",
+        marginTop: "4rem",
+        position: "relative",
+        zIndex: 10,
+    },
+    footerContainer: {
+        maxWidth: "1100px",
+        margin: "0 auto",
+        padding: "0 2rem",
+        display: "flex",
+        flexDirection: "column",
+        gap: "3rem",
+    },
+    footerContent: {
+        display: "flex",
+        justifyContent: "space-between",
+        flexWrap: "wrap",
+        gap: "3rem",
+    },
+    footerColumn: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "1.2rem",
+        minWidth: "200px",
+    },
+    footerBrand: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "1rem",
+        maxWidth: "300px",
+    },
+    footerLogo: {
+        fontSize: "1.8rem",
+        fontWeight: "700",
+        color: "#fff",
+        letterSpacing: "-0.02em",
+        background: "linear-gradient(90deg, #fff, #ccc)",
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent",
+    },
+    footerDesc: {
+        color: "#999",
+        fontSize: "0.95rem",
+        lineHeight: "1.6",
+    },
+    footerTitle: {
+        color: "#fff",
+        fontSize: "1.1rem",
+        fontWeight: "600",
+        marginBottom: "0.5rem",
+    },
+    footerLinks: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "0.8rem",
+    },
+    footerLink: {
+        color: "#999",
+        textDecoration: "none",
+        fontSize: "0.95rem",
+        transition: "color 0.2s ease",
+        cursor: "pointer",
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "0.5rem",
+    },
+    socialLinks: {
+        display: "flex",
+        gap: "1rem",
+        marginTop: "0.5rem",
+    },
+    socialIcon: {
+        color: "#ccc",
+        transition: "all 0.3s ease",
+        cursor: "pointer",
+        padding: "0.5rem",
+        backgroundColor: "rgba(255, 255, 255, 0.05)",
+        borderRadius: "50%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    copyright: {
+        borderTop: "1px solid rgba(255, 255, 255, 0.05)",
+        paddingTop: "2rem",
+        textAlign: "center",
+        color: "#666",
+        fontSize: "0.9rem",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        flexWrap: "wrap",
+        gap: "1rem",
+    },
+    popupOverlay: {
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: "rgba(0, 0, 0, 0.85)",
+        backdropFilter: "blur(8px)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "flex-start",
+        paddingTop: "120px",
+        zIndex: 1000,
+        overflowY: "auto",
+    },
+    popupForm: {
+        background: "linear-gradient(135deg, rgba(20, 20, 20, 0.98) 0%, rgba(10, 10, 10, 0.98) 100%)",
+        backdropFilter: "blur(20px)",
+        border: "1px solid rgba(255, 255, 255, 0.15)",
+        borderRadius: "20px",
+        padding: "2.5rem",
+        maxWidth: "540px",
+        width: "95%",
+        maxHeight: "90vh",
+        overflowY: "auto",
+        boxShadow: "0 25px 50px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.1) inset",
+        position: "relative",
+        animation: "popupFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+        scrollbarWidth: "none",
+        msOverflowStyle: "none",
+    },
+    popupTitle: {
+        fontSize: "2rem",
+        fontWeight: "700",
+        background: "linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%)",
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent",
+        backgroundClip: "text",
+        marginBottom: "0.5rem",
+        textAlign: "center",
+        letterSpacing: "-0.02em",
+    },
+    popupSubtitle: {
+        fontSize: "0.95rem",
+        color: "#999",
+        textAlign: "center",
+        marginBottom: "2rem",
+        fontWeight: "400",
+    },
+    formGroup: {
+        marginBottom: "1.5rem",
+        position: "relative",
+    },
+    formLabel: {
+        display: "block",
+        marginBottom: "0.5rem",
+        color: "#e0e0e0",
+        fontSize: "0.9rem",
+        fontWeight: "600",
+        letterSpacing: "0.01em",
+        transition: "color 0.3s ease",
+    },
+    modernInput: {
+        width: "100%",
+        padding: "0.875rem 1rem",
+        border: "2px solid rgba(255, 255, 255, 0.1)",
+        borderRadius: "12px",
+        backgroundColor: "rgba(255, 255, 255, 0.05)",
+        color: "#f5f5f5",
+        fontSize: "0.95rem",
+        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        outline: "none",
+        fontFamily: "inherit",
+    },
+    modernInputFocus: {
+        backgroundColor: "rgba(255, 255, 255, 0.08)",
+        borderColor: "rgba(255, 255, 255, 0.3)",
+        boxShadow: "0 0 0 4px rgba(255, 255, 255, 0.05), 0 4px 12px rgba(0, 0, 0, 0.3)",
+        transform: "translateY(-1px)",
+    },
+    formInput: {
+        width: "100%",
+        padding: "0.875rem 1rem",
+        border: "2px solid rgba(255, 255, 255, 0.1)",
+        borderRadius: "12px",
+        backgroundColor: "rgba(255, 255, 255, 0.05)",
+        color: "#f5f5f5",
+        fontSize: "0.95rem",
+        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        outline: "none",
+    },
+    formSelect: {
+        width: "100%",
+        padding: "0.875rem 1rem",
+        border: "2px solid rgba(255, 255, 255, 0.1)",
+        borderRadius: "12px",
+        backgroundColor: "rgba(255, 255, 255, 0.05)",
+        color: "#f5f5f5",
+        fontSize: "0.95rem",
+        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        outline: "none",
+        cursor: "pointer",
+    },
+    formTextarea: {
+        width: "100%",
+        padding: "0.875rem 1rem",
+        border: "2px solid rgba(255, 255, 255, 0.1)",
+        borderRadius: "12px",
+        backgroundColor: "rgba(255, 255, 255, 0.05)",
+        color: "#f5f5f5",
+        fontSize: "0.95rem",
+        minHeight: "100px",
+        resize: "vertical",
+        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        outline: "none",
+        fontFamily: "inherit",
+    },
+    formButtons: {
+        display: "flex",
+        gap: "1rem",
+        marginTop: "2.5rem",
+        justifyContent: "center",
+    },
+    gradientButton: {
+        background: "linear-gradient(135deg, #ffffff 0%, #f0f0f0 50%, #e0e0e0 100%)",
+        color: "#000",
+        border: "none",
+        padding: "0.875rem 2.5rem",
+        borderRadius: "12px",
+        fontSize: "0.95rem",
+        fontWeight: "700",
+        cursor: "pointer",
+        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        boxShadow: "0 4px 15px rgba(255, 255, 255, 0.25), 0 2px 8px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.8)",
+        position: "relative",
+        overflow: "hidden",
+        letterSpacing: "0.02em",
+        textTransform: "uppercase",
+    },
+    closeButton: {
+        position: "absolute",
+        top: "1.5rem",
+        right: "1.5rem",
+        background: "rgba(255, 255, 255, 0.08)",
+        border: "1px solid rgba(255, 255, 255, 0.15)",
+        borderRadius: "50%",
+        width: "40px",
+        height: "40px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        cursor: "pointer",
+        color: "#fff",
+        fontSize: "1.2rem",
+        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        zIndex: 10,
+        backdropFilter: "blur(10px)",
+        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
+    },
+    closeButtonHover: {
+        background: "rgba(255, 255, 255, 0.15)",
+        transform: "rotate(90deg) scale(1.1)",
+        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.4)",
+        borderColor: "rgba(255, 255, 255, 0.3)",
+    },
+    successIcon: {
+        fontSize: "4rem",
+        marginBottom: "1.5rem",
+        textAlign: "center",
+        animation: "successIconBounce 0.6s ease-out 0.2s both",
+    },
+    successTitle: {
+        fontSize: "2rem",
+        fontWeight: "700",
+        color: "#f5f5f5",
+        marginBottom: "1.5rem",
+        textAlign: "center",
+        textShadow: "0 2px 4px rgba(0, 0, 0, 0.5)",
+    },
+    successMessage: {
+        fontSize: "1.1rem",
+        color: "#f5f5f5",
+        marginBottom: "1rem",
+        lineHeight: "1.6",
+        textAlign: "center",
+    },
+    successSubMessage: {
+        fontSize: "0.95rem",
+        color: "#ccc",
+        marginBottom: "2rem",
+        lineHeight: "1.5",
+        textAlign: "center",
+    },
+    successButton: {
+        backgroundColor: "white",
+        color: "black",
+        border: "none",
+        padding: "0.75rem 1rem",
+        borderRadius: "6px",
+        fontSize: "0.9rem",
+        fontWeight: "600",
+        cursor: "pointer",
+        transition: "all 0.3s ease",
+        height: "40px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        margin: "0 auto",
+    },
+
+    // New styles for the second features section container
+    secondFeaturesContainer: {
+        display: "flex",
+        gap: "1.5rem",
+        padding: "3rem 0",
+        // Increased height to make big block taller
+        height: "600px",
+    },
+    bigBlock: {
+        flex: 2,
+        backgroundColor: "rgba(20, 20, 20, 0.6)",
+        backdropFilter: "blur(12px)",
+        border: "1px solid rgba(255, 255, 255, 0.1)",
+        padding: "2rem",
+        boxShadow: "0 20px 40px rgba(0, 0, 0, 0.4)",
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        gap: "2rem",
+        borderRadius: "24px",
+        transform: "scale(1)",
+        transition: "all 0.3s ease-in-out",
+        overflow: "hidden",
+    },
+    bigBlockImage: {
+        flex: 1,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        position: "relative",
+        zIndex: 1,
+    },
+    bigBlockContent: {
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+        gap: "0.75rem",
+        position: "relative",
+        zIndex: 1,
+    },
+    smallBlocksContainer: {
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+        gap: "1.5rem",
+    },
+    smallBlock: {
+        flex: 1,
+        backgroundColor: "rgba(20, 20, 20, 0.6)",
+        backdropFilter: "blur(12px)",
+        border: "1px solid rgba(255, 255, 255, 0.1)",
+        padding: "1.5rem",
+        boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        borderRadius: "24px",
+        transform: "scale(1)",
+        transition: "all 0.3s ease-in-out",
+        position: "relative",
+        overflow: "hidden",
+    },
+
+    // Mobile-specific styles
+    mobileMenuButton: {
+        display: "none",
+        backgroundColor: "transparent",
+        border: "none",
+        color: "#f5f5f5",
+        cursor: "pointer",
+        padding: "0.5rem",
+        zIndex: 101,
+    },
+    mobileMenu: {
+        position: "fixed",
+        top: "80px",
+        left: "50%",
+        transform: "translateX(-50%)",
+        backgroundColor: "rgba(20, 20, 20, 0.95)",
+        backdropFilter: "blur(20px)",
+        border: "1px solid rgba(255, 255, 255, 0.1)",
+        borderRadius: "24px",
+        padding: "2rem",
+        zIndex: 99,
+        boxShadow: "0 20px 50px rgba(0, 0, 0, 0.8)",
+        maxHeight: "calc(100vh - 100px)",
+        overflowY: "auto",
+        width: "calc(100% - 32px)",
+        maxWidth: "400px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "2rem",
+    },
+    mobileMenuBackdrop: {
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        zIndex: 98,
+        opacity: 0,
+        visibility: "hidden",
+        transition: "opacity 0.3s ease, visibility 0.3s ease",
+        width: "100%",
+        height: "100%",
+    },
+    mobileMenuBackdropOpen: {
+        opacity: 1,
+        visibility: "visible",
+    },
+    mobileNav: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "1rem",
+    },
+    mobileNavLink: {
+        textDecoration: "none",
+        color: "#ccc",
+        fontSize: "1rem",
+        fontWeight: "500",
+        paddingTop: "0.75rem",
+        paddingBottom: "0.75rem",
+        paddingLeft: "0",
+        paddingRight: "0",
+        borderBottom: "1px solid #333",
+        display: "block",
+        transition: "color 0.2s ease",
+    },
+    logoAnimationContainer: {
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: "rgba(0, 0, 0, 0.7)", // Semi-transparent to show stars but dim them
+        backdropFilter: "blur(5px)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 1000,
+        transition: "opacity 0.8s ease-out",
+    },
+    animatedLogo: {
+        display: "flex",
+        alignItems: "center",
+        gap: "1rem",
+        animation: "logoSpaceReveal 2s cubic-bezier(0.22, 1, 0.36, 1) forwards",
+    },
+    logoImage: {
+        height: "80px",
+        width: "auto",
+        filter: "drop-shadow(0 0 20px rgba(255, 255, 255, 0.5))",
+    },
+    logoText: {
+        fontSize: "3rem",
+        fontWeight: "600",
+        color: "#ffffff",
+        textShadow: "0 0 20px rgba(255, 255, 255, 0.5)",
+        display: "flex",
+        lineHeight: "1"
+    },
+    mainContentContainer: {
+        opacity: 0,
+        transform: "translateY(20px)",
+        transition: "all 0.8s ease-out",
+    },
+};
+
+export const getResponsiveStyles = (isMobileView) => {
+    const mobile = isMobileView;
+
+    return {
+        hero: {
+            ...styles.hero,
+            paddingTop: mobile ? "2rem" : "4rem",
+            paddingBottom: mobile ? "2rem" : "4rem",
+        },
+        heroTitle: {
+            ...styles.heroTitle,
+            fontSize: mobile ? "1.8rem" : "2.5rem",
+        },
+        heroText: {
+            ...styles.heroText,
+            fontSize: mobile ? "1rem" : "1.2rem",
+        },
+        featuresGrid: {
+            ...styles.featuresGrid,
+            gridTemplateColumns: mobile ? "1fr" : "repeat(auto-fit, minmax(220px, 1fr))",
+            gap: mobile ? "1rem" : "1.5rem",
+        },
+        secondFeaturesContainer: {
+            ...styles.secondFeaturesContainer,
+            flexDirection: mobile ? "column" : "row",
+            height: mobile ? "auto" : "600px",
+            gap: mobile ? "1rem" : "1.5rem",
+        },
+        bigBlock: {
+            ...styles.bigBlock,
+            flexDirection: mobile ? "column" : "row",
+            paddingTop: mobile ? "1rem" : "1.5rem",
+            paddingBottom: mobile ? "1rem" : "1.5rem",
+            paddingLeft: mobile ? "1rem" : "1.5rem",
+            paddingRight: mobile ? "1rem" : "1.5rem",
+        },
+        bigBlockImage: {
+            ...styles.bigBlockImage,
+            order: mobile ? 1 : 0,
+        },
+        bigBlockContent: {
+            ...styles.bigBlockContent,
+            order: mobile ? 2 : 1,
+        },
+        smallBlocksContainer: {
+            ...styles.smallBlocksContainer,
+            flexDirection: mobile ? "column" : "column",
+        },
+        smallBlock: {
+            ...styles.smallBlock,
+            minHeight: mobile ? "120px" : "auto",
+        },
+        popupForm: {
+            ...styles.popupForm,
+            paddingTop: mobile ? "1.5rem" : "2.5rem",
+            paddingBottom: mobile ? "1.5rem" : "2.5rem",
+            paddingLeft: mobile ? "1.5rem" : "2.5rem",
+            paddingRight: mobile ? "1.5rem" : "2.5rem",
+            width: mobile ? "95%" : "95%",
+            maxWidth: mobile ? "400px" : "500px",
+        },
+        popupTitle: {
+            ...styles.popupTitle,
+            fontSize: mobile ? "1.5rem" : "2rem",
+        },
+        formButtons: {
+            ...styles.formButtons,
+            flexDirection: mobile ? "column" : "row",
+            gap: mobile ? "0.5rem" : "1rem",
+        },
+        nav: {
+            ...styles.nav,
+            display: mobile ? "none" : "flex",
+            visibility: mobile ? "hidden" : "visible",
+        },
+        mobileMenuButton: {
+            ...styles.mobileMenuButton,
+            display: mobile ? "block" : "none",
+            height: "40px",
+            width: "40px",
+            marginLeft: mobile ? "0.5rem" : "0",
+        },
+        leftSection: {
+            ...styles.leftSection,
+            gap: mobile ? "0.5rem" : "1.5rem",
+        },
+        rightSection: {
+            ...styles.rightSection,
+            gap: mobile ? "0.5rem" : "0.75rem",
+        },
+        logo: {
+            ...styles.logo,
+            fontSize: mobile ? "1rem" : "1.2rem",
+        },
+        buttonPrimary: {
+            ...styles.buttonPrimary,
+            paddingTop: mobile ? "0.75rem" : "0.4rem",
+            paddingBottom: mobile ? "0.75rem" : "0.4rem",
+            paddingLeft: mobile ? "1.2rem" : "0.9rem",
+            paddingRight: mobile ? "1.2rem" : "0.9rem",
+            fontSize: mobile ? "1rem" : "0.9rem",
+        },
+        buttonSecondary: {
+            ...styles.buttonSecondary,
+            display: mobile ? "none" : "flex",
+            paddingTop: mobile ? "0.5rem" : "0.4rem",
+            paddingBottom: mobile ? "0.5rem" : "0.4rem",
+            paddingLeft: mobile ? "0.8rem" : "0.9rem",
+            paddingRight: mobile ? "0.8rem" : "0.9rem",
+            fontSize: mobile ? "0.85rem" : "0.9rem",
+        },
+    };
+};

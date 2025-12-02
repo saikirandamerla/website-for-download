@@ -1,13 +1,23 @@
-import React,{useState} from "react";
-import {Menu, X, Lock, Bot, Smartphone, MessagesSquare, Brain, Command, RefreshCw, } from "lucide-react";
-import logoImg from "./assets/logo.png";
-import screenshotImg from "./assets/Screenshot_2025-08-15_175401-removebg-preview.png";
-import DocsPage from "./DocsPage"; 
+import React, { useState, useEffect, useMemo } from "react";
+import { MessagesSquare, Bot, Lock, Smartphone, Brain, Command, RefreshCw } from "lucide-react";
+import TermsPage from "./TermsPage";
+import DocsPage from "./DocsPage";
+import Background from "./components/Background";
+import LogoAnimation from "./components/LogoAnimation";
+import Header from "./components/Header";
+import Hero from "./components/Hero";
+import Features from "./components/Features";
+import EncryptionTool from "./components/EncryptionTool";
+import SecondFeatures from "./components/SecondFeatures";
+import ReviewSection from "./components/ReviewSection";
+import Footer from "./components/Footer";
+import PopupForm from "./components/PopupForm";
+import SuccessPopup from "./components/SuccessPopup";
+import { styles, getResponsiveStyles } from "./styles";
+
+import CustomCursor from "./components/CustomCursor";
 
 export default function App() {
-  const fontFamily = "kreon, serif";
-  const fontWeightNormal = "400";
-
   const features = [
     {
       icon: <MessagesSquare size={32} color="#e5e7eb" />,
@@ -20,7 +30,7 @@ export default function App() {
       desc: "An intelligent companion designed to simplify your workflow and boost productivity. It streamlines your routine, offering smarter ways to stay organized and efficient. Focus on your priorities while intelligence works seamlessly in the background.",
     },
     {
-      icon: <Lock size={32}  color="#e5e7eb" />,
+      icon: <Lock size={32} color="#e5e7eb" />,
       title: "End to End Encryption",
       desc: "This security model relies on a pair of keys: one public for encryption and one private for decryption. The advanced mathematics behind this process makes it virtually impossible to compromise, ensuring that your communication remains private, secure, and trustworthy.",
     },
@@ -49,539 +59,19 @@ export default function App() {
       title: "Real-time Sync",
       desc: "Your conversations, preferences, and settings follow you wherever you go—ensuring a consistent, uninterrupted experience whether you’re on any mobile device. ",
     },
-    
   ];
-const [reviews, setReviews] = useState([]); // store all reviews locally
-const [reviewData, setReviewData] = useState({ name: "", review: "" });
 
-  const styles = {
-    container: {
-      fontFamily,
-      fontWeight: fontWeightNormal,
-      color: "#f5f5f5",
-      backgroundColor: "#0d0d0d",
-      margin: 0,
-      padding: 0,
-      minHeight: "100vh",
-    },
-    // Global scrollbar hiding styles
-    globalStyles: `
-      .popup-form::-webkit-scrollbar {
-        display: none;
-      }
-      .popup-form {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-      }
-      
-      @keyframes button3DFloat {
-        0%, 100% {
-          transform: translateY(0) rotateX(0deg);
-        }
-        50% {
-          transform: translateY(-3px) rotateX(2deg);
-        }
-      }
-      
-      .button-3d {
-        animation: button3DFloat 3s ease-in-out infinite;
-      }
-      
-      .button-3d:hover {
-        animation: none;
-        transform: translateY(-4px) rotateX(5deg) scale(1.05);
-        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5), 0 6px 12px rgba(0, 0, 0, 0.4);
-      }
-      
-      .button-3d:active {
-        transform: translateY(1px) rotateX(0deg) scale(0.98);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-      }
-    `,
-    contentWrapper: {
-      maxWidth: "1100px",
-      margin: "0 auto",
-      fontFamily,
-      padding: "0 1rem",
-      overflowX: "hidden",
-      paddingTop: "64px",
-    },
-    header: {
-      borderBottom: "1px solid #333",
-      backgroundColor: "#0d0d0d",
-      position: "fixed",
-      top: 0,
-      left: 0,
-      right: 0,
-      zIndex: 100,
-      height: "64px",
-      display: "flex",
-      alignItems: "center",
-    },
-    headerContent: {
-      margin: "0 auto",
-      padding: "0 1rem",
-      fontFamily,
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      height: "64px",
-      width: "100%",
-      maxWidth: "1100px",
-    },
-    leftSection: {
-      display: "flex",
-      alignItems: "center",
-      gap: "1.5rem",
-    },
-    logo: {
-      display: "flex",
-      alignItems: "center",
-    },
-    nav: {
-      display: "flex",
-      gap: "1.25rem",
-    },
-    navLink: {
-      textDecoration: "none",
-      color: "#ccc",
-      fontSize: "0.95rem",
-      fontWeight: "500",
-    },
-    rightSection: {
-      display: "flex",
-      alignItems: "center",
-      gap: "0.75rem",
-    },
-    text: {
-      fontSize: "0.9rem",
-      color: "#ccc",
-    },
-    buttonPrimary: {
-      paddingTop: "0.75rem",
-      paddingBottom: "0.75rem",
-      paddingLeft: "1rem",
-      paddingRight: "1rem",
-      backgroundColor: "white",
-      color: "black",
-      border: "none",
-      borderRadius: "6px",
-      cursor: "pointer",
-      fontSize: "0.9rem",
-      height: "40px",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      position: "relative",
-      transform: "translateY(0)",
-      transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2)",
-    },
-    buttonSecondary: {
-      paddingTop: "0.75rem",
-      paddingBottom: "0.75rem",
-      paddingLeft: "1rem",
-      paddingRight: "1rem",
-      backgroundColor: "transparent",
-      border: "1px solid #ffffff",
-      borderRadius: "6px",
-      color: "#ffffff",
-      cursor: "pointer",
-      fontSize: "0.9rem",
-      height: "40px",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    buttonPrimaryHover: {
-      transform: "translateY(-2px)",
-      boxShadow: "0 8px 16px rgba(0, 0, 0, 0.4), 0 4px 8px rgba(0, 0, 0, 0.3)",
-    },
-    buttonPrimaryActive: {
-      transform: "translateY(1px)",
-      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2)",
-    },
-    heroWrapper: {
-  maxWidth: "800px",
-  margin: "0 auto",
-  padding: "0 5rem",
-  minHeight: "calc(100vh - 64px - 2rem)", 
-  display: "flex",
-  justifyContent: "center",  // horizontal center
-  alignItems: "center",      // vertical center
-  textAlign: "center"        // optional: center text
-},
-
-    hero: {
-      paddingTop: "2rem",
-      paddingBottom: "2rem",
-      paddingLeft: "0",
-      paddingRight: "0",
-      textAlign: "left",
-    },
-    heroTitle: {
-      fontSize: "2.5rem",
-      marginBottom: "1rem",
-      color: "#f5f5f5",
-    },
-    heroText: {
-      fontSize: "1.2rem",
-      marginBottom: "2rem",
-      color: "#ccc",
-    },
-    featuresGrid: {
-      display: "grid",
-      gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-      gap: "1.5rem",
-      padding: "2rem 0",
-    },
-    featureCard: {
-      backgroundColor: "#0d0d0d",
-      padding: "1.5rem",
-      border: "1px solid #ffffff",
-      boxShadow: "0 1px 3px rgba(255,255,255,0.05)",
-      transition: "all 0.3s ease-in-out",
-      transform: "scale(1)",
-      borderRadius: 0,
-    },
-    featureCardHover: {
-      transform: "scale(1.03)",
-      boxShadow:
-        "6px 6px 0 rgba(255,255,255,0.6), 7px 7px 5px rgba(255,255,255,0.1)",
-    },
-    featureTitle: {
-      marginTop: "1rem",
-      fontWeight: "600",
-      fontSize: "1.125rem",
-      color: "#fff",
-    },
-    featureDesc: {
-      marginTop: "0.5rem",
-      color: "#ccc",
-      whiteSpace: "pre-line",
-    },
-    footer: {
-      padding: "2rem 0",
-      borderTop: "1px solid #333",
-      fontSize: "0.9rem",
-      textAlign: "center",
-      color: "#888",
-    },
-    footerLinks: {
-      display: "flex",
-      justifyContent: "center",
-      flexWrap: "wrap",
-      gap: "1rem",
-      margin: "1rem 0",
-    },
-    popupOverlay: {
-  position: "fixed",
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  backgroundColor: "rgba(0, 0, 0, 0.8)",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "flex-start", // align popup to top
-  zIndex: 1000,
-    },
-    popupForm: {
-      backgroundColor: "#0d0d0d",
-      border: "2px solid #fff",
-      padding: "2.5rem",
-      borderRadius: "12px",
-      maxWidth: "500px",
-      width: "95%",
-      maxHeight: "90vh",
-      overflowY: "auto",
-      boxShadow: "0 20px 40px rgba(0, 0, 0, 0.8)",
-      position: "relative",
-      // Hide scrollbar for webkit browsers
-      scrollbarWidth: "none", // Firefox
-      msOverflowStyle: "none", // IE and Edge
-    },
-    successPopup: {
-      backgroundColor: "#0d0d0d",
-      border: "2px solid #fff",
-      padding: "2.5rem",
-      borderRadius: "12px",
-      maxWidth: "500px",
-      width: "95%",
-      maxHeight: "90vh",
-      overflowY: "auto",
-      boxShadow: "0 20px 40px rgba(0, 0, 0, 0.8)",
-      position: "relative",
-      animation: "successPopupFadeIn 0.5s ease-out",
-      // Hide scrollbar for webkit browsers
-      scrollbarWidth: "none", // Firefox
-      msOverflowStyle: "none", // IE and Edge
-    },
-    popupTitle: {
-      fontSize: "2rem",
-      fontWeight: "700",
-      color: "#f5f5f5",
-      marginBottom: "2rem",
-      textAlign: "center",
-      textShadow: "0 2px 4px rgba(0, 0, 0, 0.5)",
-    },
-    formGroup: {
-      marginBottom: "1.5rem",
-    },
-    formLabel: {
-      display: "block",
-      marginBottom: "0.75rem",
-      color: "#f5f5f5",
-      fontSize: "1rem",
-      fontWeight: "500",
-    },
-    formInput: {
-      width: "100%",
-      padding: "1rem",
-      border: "2px solid #333",
-      borderRadius: "8px",
-      backgroundColor: "#1a1a1a",
-      color: "#f5f5f5",
-      fontSize: "1rem",
-      transition: "border-color 0.3s ease",
-    },
-    formSelect: {
-      width: "100%",
-      padding: "1rem",
-      border: "2px solid #333",
-      borderRadius: "8px",
-      backgroundColor: "#1a1a1a",
-      color: "#f5f5f5",
-      fontSize: "1rem",
-      transition: "border-color 0.3s ease",
-    },
-    formTextarea: {
-      width: "100%",
-      padding: "1rem",
-      border: "2px solid #333",
-      borderRadius: "8px",
-      backgroundColor: "#1a1a1a",
-      color: "#f5f5f5",
-      fontSize: "1rem",
-      minHeight: "100px",
-      resize: "vertical",
-      transition: "border-color 0.3s ease",
-    },
-    formButtons: {
-      display: "flex",
-      gap: "1rem",
-      marginTop: "2rem",
-      justifyContent: "center",
-    },
-    successIcon: {
-      fontSize: "4rem",
-      marginBottom: "1.5rem",
-      textAlign: "center",
-      animation: "successIconBounce 0.6s ease-out 0.2s both",
-    },
-    successTitle: {
-      fontSize: "2rem",
-      fontWeight: "700",
-      color: "#f5f5f5",
-      marginBottom: "1.5rem",
-      textAlign: "center",
-      textShadow: "0 2px 4px rgba(0, 0, 0, 0.5)",
-    },
-    successMessage: {
-      fontSize: "1.1rem",
-      color: "#f5f5f5",
-      marginBottom: "1rem",
-      lineHeight: "1.6",
-      textAlign: "center",
-    },
-    successSubMessage: {
-      fontSize: "0.95rem",
-      color: "#ccc",
-      marginBottom: "2rem",
-      lineHeight: "1.5",
-      textAlign: "center",
-    },
-    successButton: {
-      backgroundColor: "white",
-      color: "black",
-      border: "none",
-      padding: "0.75rem 1rem",
-      borderRadius: "6px",
-      fontSize: "0.9rem",
-      fontWeight: "600",
-      cursor: "pointer",
-      transition: "all 0.3s ease",
-      height: "40px",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      margin: "0 auto",
-    },
-
-    // New styles for the second features section container
-    secondFeaturesContainer: {
-      display: "flex",
-      gap: "1.5rem",
-      padding: "3rem 0",
-      // Increased height to make big block taller
-      height: "600px",
-    },
-    bigBlock: {
-      flex: 2,
-      backgroundColor: "#0d0d0d",
-      border: "1px solid #fff",
-      padding: "1.5rem",
-      boxShadow:
-        "6px 6px 0 rgba(255,255,255,0.6), 7px 7px 5px rgba(255,255,255,0.1)",
-      display: "flex",
-      flexDirection: "row",
-      alignItems: "center",
-      gap: "1.5rem",
-      borderRadius: 0,
-      transform: "scale(1)",
-      transition: "all 0.3s ease-in-out",
-    },
-    bigBlockImage: {
-      flex: 1,
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    bigBlockContent: {
-      flex: 1,
-      display: "flex",
-      flexDirection: "column",
-      gap: "0.5rem",
-    },
-    smallBlocksContainer: {
-      flex: 1,
-      display: "flex",
-      flexDirection: "column",
-      gap: "1.5rem",
-    },
-    smallBlock: {
-      flex: 1,
-      backgroundColor: "#0d0d0d",
-      border: "1px solid #fff",
-      padding: "1rem",
-      boxShadow: "6px 6px 0 rgba(255,255,255,0.6), 7px 7px 5px rgba(255,255,255,0.1)",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
-      borderRadius: 0,
-      transform: "scale(1)",
-      transition: "all 0.3s ease-in-out",
-    },
-
-    // Mobile-specific styles
-    mobileMenuButton: {
-      display: "none",
-      backgroundColor: "transparent",
-      border: "none",
-      color: "#f5f5f5",
-      cursor: "pointer",
-      padding: "0.5rem",
-      zIndex: 101,
-    },
-    mobileMenu: {
-      position: "fixed",
-      top: "64px",
-      left: 0,
-      right: 0,
-      backgroundColor: "#0d0d0d",
-      borderBottom: "1px solid #333",
-      padding: "1rem",
-      zIndex: 99,
-      boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-      maxHeight: "calc(100vh - 64px)",
-      overflowY: "auto",
-      width: "100%",
-    },
-    mobileMenuBackdrop: {
-      position: "fixed",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: "rgba(0, 0, 0, 0.5)",
-      zIndex: 98,
-      opacity: 0,
-      visibility: "hidden",
-      transition: "opacity 0.3s ease, visibility 0.3s ease",
-      width: "100%",
-      height: "100%",
-    },
-    mobileMenuBackdropOpen: {
-      opacity: 1,
-      visibility: "visible",
-    },
-    mobileNav: {
-      display: "flex",
-      flexDirection: "column",
-      gap: "1rem",
-    },
-    mobileNavLink: {
-      textDecoration: "none",
-      color: "#ccc",
-      fontSize: "1rem",
-      fontWeight: "500",
-      paddingTop: "0.75rem",
-      paddingBottom: "0.75rem",
-      paddingLeft: "0",
-      paddingRight: "0",
-      borderBottom: "1px solid #333",
-      display: "block",
-      transition: "color 0.2s ease",
-    },
-    logoAnimationContainer: {
-      position: "fixed",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: "#0d0d0d",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      zIndex: 1000,
-      transition: "opacity 0.5s ease-out",
-    },
-    animatedLogo: {
-      display: "flex",
-      alignItems: "center",
-      gap: "1rem",
-      animation: "logoMove 2s ease-in-out forwards",
-    },
-    logoImage: {
-      height: "80px",
-      width: "auto",
-      filter: "drop-shadow(0 0 20px rgba(255, 255, 255, 0.5))",
-    },
-    logoText: {
-      fontSize: "3rem",
-      fontWeight: "600",
-      color: "#ffffff",
-      textShadow: "0 0 20px rgba(255, 255, 255, 0.5)",
-      display: "flex", 
-      lineHeight: "1"
-    },
-    mainContentContainer: {
-      opacity: 0,
-      transform: "translateY(20px)",
-      transition: "all 0.8s ease-out",
-    },
-  };
-
-  const [hoveredIndex, setHoveredIndex] = React.useState(null);
-  const [hoveredSecondIndex, setHoveredSecondIndex] = React.useState(null);
-  const [showPopup, setShowPopup] = React.useState(false);
-  const [showSuccessPopup, setShowSuccessPopup] = React.useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
-  const [isMobileView, setIsMobileView] = React.useState(false);
-  const [showDocsPage, setShowDocsPage] = React.useState(false);
-  const [showLogoAnimation, setShowLogoAnimation] = React.useState(true);
-  const [showMainContent, setShowMainContent] = React.useState(false);
-  const [formData, setFormData] = React.useState({
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [hoveredSecondIndex, setHoveredSecondIndex] = useState(null);
+  const [showPopup, setShowPopup] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isMobileView, setIsMobileView] = useState(false);
+  const [showDocsPage, setShowDocsPage] = useState(false);
+  const [showTermsPage, setShowTermsPage] = useState(false);
+  const [showLogoAnimation, setShowLogoAnimation] = useState(true);
+  const [showMainContent, setShowMainContent] = useState(false);
+  const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
@@ -594,21 +84,20 @@ const [reviewData, setReviewData] = useState({ name: "", review: "" });
   const isMobile = () => window.innerWidth <= 768;
 
   // Add resize listener
-  React.useEffect(() => {
+  useEffect(() => {
     const checkMobile = () => {
       const mobile = isMobile();
       setIsMobileView(mobile);
-      console.log('Mobile view:', mobile, 'Window width:', window.innerWidth);
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    
+
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   // Logo animation effect
-  React.useEffect(() => {
+  useEffect(() => {
     const timer = setTimeout(() => {
       setShowLogoAnimation(false);
       setShowMainContent(true);
@@ -618,207 +107,17 @@ const [reviewData, setReviewData] = useState({ name: "", review: "" });
   }, []);
 
   // Inject global styles for hiding scrollbars
-  React.useEffect(() => {
+  useEffect(() => {
     const styleElement = document.createElement('style');
     styleElement.textContent = styles.globalStyles;
     document.head.appendChild(styleElement);
-    
+
     return () => {
       document.head.removeChild(styleElement);
     };
   }, []);
 
-  // Add responsive styles based on screen size
-  const getResponsiveStyles = () => {
-    const mobile = isMobileView;
-    
-    return {
-      hero: {
-        ...styles.hero,
-        paddingTop: mobile ? "2rem" : "4rem",
-        paddingBottom: mobile ? "2rem" : "4rem",
-      },
-      heroTitle: {
-        ...styles.heroTitle,
-        fontSize: mobile ? "1.8rem" : "2.5rem",
-      },
-      heroText: {
-        ...styles.heroText,
-        fontSize: mobile ? "1rem" : "1.2rem",
-      },
-      featuresGrid: {
-        ...styles.featuresGrid,
-        gridTemplateColumns: mobile ? "1fr" : "repeat(auto-fit, minmax(220px, 1fr))",
-        gap: mobile ? "1rem" : "1.5rem",
-      },
-      secondFeaturesContainer: {
-        ...styles.secondFeaturesContainer,
-        flexDirection: mobile ? "column" : "row",
-        height: mobile ? "auto" : "600px",
-        gap: mobile ? "1rem" : "1.5rem",
-      },
-      bigBlock: {
-        ...styles.bigBlock,
-        flexDirection: mobile ? "column" : "row",
-        paddingTop: mobile ? "1rem" : "1.5rem",
-        paddingBottom: mobile ? "1rem" : "1.5rem",
-        paddingLeft: mobile ? "1rem" : "1.5rem",
-        paddingRight: mobile ? "1rem" : "1.5rem",
-      },
-      bigBlockImage: {
-        ...styles.bigBlockImage,
-        order: mobile ? 1 : 0,
-      },
-      bigBlockContent: {
-        ...styles.bigBlockContent,
-        order: mobile ? 2 : 1,
-      },
-      smallBlocksContainer: {
-        ...styles.smallBlocksContainer,
-        flexDirection: mobile ? "column" : "column",
-      },
-      smallBlock: {
-        ...styles.smallBlock,
-        minHeight: mobile ? "120px" : "auto",
-      },
-      popupForm: {
-        ...styles.popupForm,
-        paddingTop: mobile ? "1.5rem" : "2.5rem",
-        paddingBottom: mobile ? "1.5rem" : "2.5rem",
-        paddingLeft: mobile ? "1.5rem" : "2.5rem",
-        paddingRight: mobile ? "1.5rem" : "2.5rem",
-        width: mobile ? "95%" : "95%",
-        maxWidth: mobile ? "400px" : "500px",
-      },
-      popupTitle: {
-        ...styles.popupTitle,
-        fontSize: mobile ? "1.5rem" : "2rem",
-      },
-      formButtons: {
-        ...styles.formButtons,
-        flexDirection: mobile ? "column" : "row",
-        gap: mobile ? "0.5rem" : "1rem",
-      },
-      nav: {
-        ...styles.nav,
-        display: mobile ? "none" : "flex",
-        visibility: mobile ? "hidden" : "visible",
-      },
-      mobileMenuButton: {
-        ...styles.mobileMenuButton,
-        display: mobile ? "block" : "none",
-        height: "40px",
-        width: "40px",
-        marginLeft: mobile ? "0.5rem" : "0",
-      },
-      leftSection: {
-        ...styles.leftSection,
-        gap: mobile ? "0.5rem" : "1.5rem",
-      },
-      rightSection: {
-        ...styles.rightSection,
-        gap: mobile ? "0.5rem" : "0.75rem",
-      },
-      logo: {
-        ...styles.logo,
-        fontSize: mobile ? "1rem" : "1.2rem",
-      },
-      buttonPrimary: {
-        ...styles.buttonPrimary,
-        paddingTop: mobile ? "0.75rem" : "0.4rem",
-        paddingBottom: mobile ? "0.75rem" : "0.4rem",
-        paddingLeft: mobile ? "1.2rem" : "0.9rem",
-        paddingRight: mobile ? "1.2rem" : "0.9rem",
-        fontSize: mobile ? "1rem" : "0.9rem",
-      },
-      buttonSecondary: {
-        ...styles.buttonSecondary,
-        paddingTop: mobile ? "0.5rem" : "0.4rem",
-        paddingBottom: mobile ? "0.5rem" : "0.4rem",
-        paddingLeft: mobile ? "0.8rem" : "0.9rem",
-        paddingRight: mobile ? "0.8rem" : "0.9rem",
-        fontSize: mobile ? "0.85rem" : "0.9rem",
-      },
-    };
-  };
-
-  const responsiveStyles = React.useMemo(() => getResponsiveStyles(), [isMobileView]);
-
-  const [text, setText] = useState("");
-  const [encrypted, setEncrypted] = useState("");
-  const [isEncrypting, setIsEncrypting] = useState(false);
-  const [encryptedAt, setEncryptedAt] = useState(null);
-  const [copied, setCopied] = useState(false);
-
-  const handleEncrypt = () => {
-    // Create a UTF-8 safe base64 encoder
-    const utf8ToB64 = (str) => {
-      try {
-        const uint8 = new TextEncoder().encode(str);
-        let binary = "";
-        for (let i = 0; i < uint8.length; i++) {
-          binary += String.fromCharCode(uint8[i]);
-        }
-        return btoa(binary);
-      } catch (err) {
-        // Fallback to simple btoa if TextEncoder isn't available
-        try {
-          return btoa(str);
-        } catch (e) {
-          console.error('Base64 encode failed:', e);
-          return '';
-        }
-      }
-    };
-
-    // Generate a short random nonce (hex) using crypto API
-    const generateNonce = (length = 8) => {
-      try {
-        const arr = new Uint8Array(length);
-        window.crypto.getRandomValues(arr);
-        return Array.from(arr).map((b) => b.toString(16).padStart(2, '0')).join('');
-      } catch (err) {
-        // fallback to Math.random
-        let s = '';
-        for (let i = 0; i < length; i++) s += Math.floor(Math.random() * 256).toString(16).padStart(2, '0');
-        return s;
-      }
-    };
-
-    // Ensure non-empty input
-    if (text.trim() === '') return;
-    setIsEncrypting(true);
-    setCopied(false);
-
-    // Simulate a short processing delay for UX and create a unique payload
-    setTimeout(() => {
-      try {
-        const nonce = generateNonce(8);
-        const timestamp = new Date().toISOString();
-        // Combine original text with nonce and timestamp so repeated encryptions produce different outputs
-        const payload = JSON.stringify({ text, nonce, timestamp });
-        const encoded = utf8ToB64(payload);
-        setEncrypted(encoded);
-        setEncryptedAt(new Date().toLocaleString());
-      } catch (err) {
-        console.error('Encryption error:', err);
-        setEncrypted('');
-      } finally {
-        setIsEncrypting(false);
-      }
-    }, 250);
-  };
-
-  const handleCopyEncrypted = async () => {
-    if (!encrypted) return;
-    try {
-      await navigator.clipboard.writeText(encrypted);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Copy failed:', err);
-    }
-  };
+  const responsiveStyles = useMemo(() => getResponsiveStyles(isMobileView), [isMobileView]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -830,7 +129,7 @@ const [reviewData, setReviewData] = useState({ name: "", review: "" });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Store in localStorage first (as backup)
     try {
       const submissions = JSON.parse(localStorage.getItem('waitlistSubmissions') || '[]');
@@ -844,7 +143,7 @@ const [reviewData, setReviewData] = useState({ name: "", review: "" });
     } catch (localError) {
       console.error('Error saving locally:', localError);
     }
-    
+
     // Prepare data to send to Google Sheets via Apps Script
     const submissionData = {
       name: formData.name,
@@ -855,12 +154,11 @@ const [reviewData, setReviewData] = useState({ name: "", review: "" });
       timestamp: new Date().toISOString(),
     };
 
-  // Show success popup immediately (UI feedback) and close the form
-  setShowSuccessPopup(true);
-  setShowPopup(false);
-  // Clear form fields after successful submit
-  setFormData({ name: '', email: '', phone: '', reason: '', referral: '' });
-  setReviewData({ review: '' });
+    // Show success popup immediately (UI feedback) and close the form
+    setShowSuccessPopup(true);
+    setShowPopup(false);
+    // Clear form fields after successful submit
+    setFormData({ name: '', email: '', phone: '', reason: '', referral: '' });
 
     // Send to Google Apps Script in background (non-blocking)
     (async () => {
@@ -914,13 +212,10 @@ This submission was also saved locally in the browser.
     const mailtoLink = `mailto:adjunctpa@gmail.com?subject=New Submission - ${submissionData.name || ''}&body=${encodeURIComponent(emailBody)}`;
 
     console.log('Form submitted (local saved) — background Apps Script upload started');
-console.log('Email link prepared:', mailtoLink);
+    console.log('Email link prepared:', mailtoLink);
 
     // Show success popup only (do not close the form or clear inputs)
     setShowSuccessPopup(true);
-
-    // Optionally open email client (uncomment to enable)
-    // window.open(mailtoLink);
   };
 
   const handleClosePopup = () => {
@@ -935,14 +230,15 @@ console.log('Email link prepared:', mailtoLink);
   const closeMobileMenu = () => {
     setMobileMenuOpen(false);
   };
-  React.useEffect(() => {
+
+  useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === 'Escape' && mobileMenuOpen) {
         closeMobileMenu();
       }
     };
 
-    document.addEventListener('keydown', handleEscape);  
+    document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
   }, [mobileMenuOpen]);
 
@@ -955,6 +251,8 @@ console.log('Email link prepared:', mailtoLink);
 
   return (
     <>
+      <CustomCursor />
+      <Background />
       <style>
         {`
           @keyframes logoMove {
@@ -974,19 +272,18 @@ console.log('Email link prepared:', mailtoLink);
         `}
       </style>
 
-      {/* Logo Animation Overlay */}
-      {showLogoAnimation && (
-        <div style={styles.logoAnimationContainer}>
-          <div style={styles.animatedLogo}>
-            <img 
-              src={logoImg} 
-              alt="Adjunct Logo" 
-              style={styles.logoImage}
-            />
-            <span style={styles.logoText}>djunct</span>
-          </div>
-        </div>
-      )}
+      <LogoAnimation showLogoAnimation={showLogoAnimation} styles={styles} />
+
+      <Header
+        styles={styles}
+        responsiveStyles={responsiveStyles}
+        isMobileView={isMobileView}
+        mobileMenuOpen={mobileMenuOpen}
+        toggleMobileMenu={toggleMobileMenu}
+        closeMobileMenu={closeMobileMenu}
+        setShowPopup={setShowPopup}
+        setShowDocsPage={setShowDocsPage}
+      />
 
       {/* Main App Content */}
       <div style={{
@@ -997,492 +294,73 @@ console.log('Email link prepared:', mailtoLink);
         }),
       }}>
         <div style={styles.container}>
-          {/* HEADER */}
-          <header style={styles.header}>
-        <div style={styles.headerContent}>
-          {/* Left: logo + navigation */}
-          <div style={responsiveStyles.leftSection}>
-            <div 
-              style={{...responsiveStyles.logo, cursor: "pointer"}}
-              onClick={() => {
-                setShowDocsPage(false);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-            >
-              <img src={logoImg} alt="Logo" style={{ height: "40px", width: "auto" }} />
-              <span style={{fontSize: "32px", fontWeight: "600", color: "#f5f5f5", display: "flex", alignItems: "center", lineHeight: "1"}}>djunct</span>
-            </div>
-            {/* Desktop Navigation */}
-            {!isMobileView && (
-              <nav style={styles.nav}>
-                            
-                <a 
-                  style={{...styles.navLink, cursor: "pointer"}}
-                  onClick={() => document.querySelector('footer').scrollIntoView({ behavior: 'smooth' })}
-                >
-                  Contact
-                </a>
-              </nav>
-            )}
-          </div>
 
-          {/* Right: CTA + Mobile Menu */}
-          <div style={responsiveStyles.rightSection}>
-            <button 
-              className="button-3d"
-              style={responsiveStyles.buttonSecondary}
-              onClick={() => setShowPopup(true)}
-            >
-              Get early access
-            </button>
-            {isMobileView && (
-              <button 
-                style={responsiveStyles.mobileMenuButton}
-                onClick={toggleMobileMenu}
-              >
-                {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-              </button>
-            )}
-          </div>
-        </div>
+          {/* Show Docs Page, Terms Page, or Main Content */}
+          {showDocsPage ? (
+            <DocsPage onBack={() => setShowDocsPage(false)} />
+          ) : showTermsPage ? (
+            <TermsPage onBack={() => setShowTermsPage(false)} />
+          ) : (
+            <>
+              {/* MAIN CONTENT */}
+              <div style={styles.contentWrapper}>
+                <Hero
+                  styles={styles}
+                  responsiveStyles={responsiveStyles}
+                  setShowPopup={setShowPopup}
+                />
 
-        {/* Mobile Menu Backdrop */}
-        {isMobileView && mobileMenuOpen && (
-          <div 
-            style={styles.mobileMenuBackdrop}
-            onClick={closeMobileMenu}
-          />
-        )}
-        
-        {/* Mobile Menu */}
-        {isMobileView && mobileMenuOpen && (
-          <div 
-            key="mobile-menu"
-            style={styles.mobileMenu}
-          >
-            <div style={styles.mobileNav}>
-              <a 
-                style={{...styles.mobileNavLink, cursor: "pointer"}}
-                onClick={() => {
-                  closeMobileMenu();
-                  document.querySelector('footer').scrollIntoView({ behavior: 'smooth' });
-                }}
-              >
-                Contact
-              </a>
-            </div>
-          </div>
-        )}
-      </header>
+                <Features
+                  styles={styles}
+                  responsiveStyles={responsiveStyles}
+                  features={features}
+                  hoveredIndex={hoveredIndex}
+                  setHoveredIndex={setHoveredIndex}
+                />
 
-      {/* Show Docs Page or Main Content */}
-      {showDocsPage ? (
-        <DocsPage onBack={() => setShowDocsPage(false)} />
-      ) : (
-        <>
-          {/* MAIN CONTENT */}
-          <div style={styles.contentWrapper}>
-        {/* HERO */}
-        <div style={styles.heroWrapper}>
-          <section style={responsiveStyles.hero}>
-            <h1 style={responsiveStyles.heroTitle}>
-              Adjunct - Pioneer the Future of AI Communication
-            </h1>
-            <p style={responsiveStyles.heroText}>
-              Human Intelligence, AI Precision, Perfectly Fused. The messaging
-              app that uses the AI which does the work easy and provides the
-              privacy than any other. Not just the guidance, It's the
-              performance.
-            </p>
-            <button 
-              className="button-3d"
-              style={responsiveStyles.buttonPrimary}
-              onClick={() => setShowPopup(true)}
-            >
-              Join Waitlist
-            </button>
-          </section>
-        </div>
+                <EncryptionTool />
 
-        {/* FIRST FEATURES GRID */}
-        <section style={responsiveStyles.featuresGrid}>
-          {features.map((f, i) => (
-            <div
-              key={i}
-              style={{
-                ...styles.featureCard,
-                ...(hoveredIndex === i ? styles.featureCardHover : {}),
-              }}
-              onMouseEnter={() => setHoveredIndex(i)}
-              onMouseLeave={() => setHoveredIndex(null)}
-            >
-              {f.icon}
-              <h3 style={styles.featureTitle}>{f.title}</h3>
-              <p style={styles.featureDesc}>{f.desc}</p>
-            </div>
-          ))}
-        </section>
-<div id="whats-new" style={{ textAlign: "center", marginBottom: "2rem", fontFamily: "kreon, serif" }}>
-  <h1 >Features</h1>
-  <p>Adjunct isn’t just another chat tool—it’s an intelligent companion designed to make every conversation effortless and secure. You can exchange messages that feel natural and fluid, while advanced intelligence helps you craft the perfect response, keep track of what matters, and simplify your day-to-day interactions. Every message you share is wrapped in strong protection, ensuring your privacy remains untouched. The platform adapts to you—learning, guiding, and assisting—so your conversations become more engaging, interactive, and truly your own.
-  </p>
-</div>
+                <SecondFeatures
+                  styles={styles}
+                  responsiveStyles={responsiveStyles}
+                  secondFeatures={secondFeatures}
+                  hoveredSecondIndex={hoveredSecondIndex}
+                  setHoveredSecondIndex={setHoveredSecondIndex}
+                />
 
-<div style={{ textAlign: "center", fontFamily: "kreon, serif" }}>
-  <h2 >Try Our Simple Encryption Tool</h2>
-      <div style={{ marginTop: "2rem" }}>
-        <input
-          type="text"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="Enter text to encrypt"
-          style={{
-            padding: "0.5rem",
-            borderRadius: "8px",
-            border: "1px solid #ccc",
-            width: "250px",
-            marginRight: "10px",
-          }}
-        />
-        <button
-          onClick={handleEncrypt}
-          style={{
-            padding: "0.5rem 1rem",
-            borderRadius: "8px",
-            border: "none",
-            backgroundColor: "#ffffffff",
-            color: "black",
-            cursor: "pointer",
-          }}
-        >
-          Encrypt
-        </button>
-      </div>
+                <ReviewSection />
 
-      <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-        {isEncrypting ? (
-          <div style={{ color: '#ccc' }}>Encrypting…</div>
-        ) : encrypted ? (
-          <div style={{ display: 'inline-block', textAlign: 'left' }}>
-            <div style={{ fontWeight: '700', marginBottom: '0.5rem' }}>🔐 Encrypted Text</div>
-            <div style={{ padding: '8px 12px', border: '1px solid #ccc', borderRadius: 8, background: '#0b0b0b', color: '#22c55e', fontFamily: 'monospace' }}>
-              {encrypted}
-            </div>
-            <div style={{ marginTop: '0.5rem', display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
-              <button onClick={handleCopyEncrypted} style={{ padding: '6px 10px', borderRadius: 6, border: 'none', cursor: 'pointer' }}>{copied ? 'Copied' : 'Copy'}</button>
-              <button onClick={() => { setEncrypted(''); setText(''); }} style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #444', background: 'transparent', color: '#fff', cursor: 'pointer' }}>Clear</button>
-            </div>
-            {encryptedAt && <div style={{ marginTop: '0.5rem', color: '#888', fontSize: '0.85rem' }}>Encrypted at: {encryptedAt}</div>}
-          </div>
-        ) : (
-          <div style={{ color: '#777' }}>Enter text above and click Encrypt to create an encrypted string.</div>
-        )}
-      </div>
-      </div>
-
-        {/* SECOND FEATURES SQUARE-LIKE LAYOUT */}
-        <section style={responsiveStyles.secondFeaturesContainer}>
-          {/* Big block on left */}
-          <div
-            style={{
-              ...responsiveStyles.bigBlock,
-              ...(hoveredSecondIndex === 0 ? styles.featureCardHover : {}),
-            }}
-            onMouseEnter={() => setHoveredSecondIndex(0)}
-            onMouseLeave={() => setHoveredSecondIndex(null)}
-          >
-            <div style={responsiveStyles.bigBlockImage}>
-              <img 
-                src={screenshotImg} 
-                alt="Feature preview" 
-                style={{ 
-                  maxWidth: "100%", 
-                  maxHeight: "300px", 
-                  objectFit: "contain" 
-                }} 
-              />
-            </div>
-            <div style={responsiveStyles.bigBlockContent}>
-              {secondFeatures[0].icon}
-              <h3 style={styles.featureTitle}>{secondFeatures[0].title}</h3>
-              <p style={styles.featureDesc}>{secondFeatures[0].desc}</p>
-            </div>
-          </div>
-
-          {/* Four smaller stacked blocks on right */}
-          <div style={responsiveStyles.smallBlocksContainer}>
-            {secondFeatures.slice(1).map((f, i) => (
-              <div
-                key={i + 1}
-                style={{
-                  ...responsiveStyles.smallBlock,
-                  ...(hoveredSecondIndex === i + 1
-                    ? styles.featureCardHover
-                    : {}),
-                }}
-                onMouseEnter={() => setHoveredSecondIndex(i + 1)}
-                onMouseLeave={() => setHoveredSecondIndex(null)}
-              >
-                {f.icon}
-                <h3 style={styles.featureTitle}>{f.title}</h3>
-                <p style={styles.featureDesc}>{f.desc}</p>
+                <Footer
+                  styles={styles}
+                  onOpenTerms={() => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    setShowTermsPage(true);
+                  }}
+                />
               </div>
-            ))}
-          </div>
-        </section>
-{/* REVIEW SECTION */}
-<div 
-  style={{ 
-    backgroundColor: "#1a1a1a", 
-    padding: "2rem", 
-    borderRadius: "12px", 
-    border: "1px solid #333", 
-    margin: "3rem auto", 
-    maxWidth: "800px",
-    textAlign: "center",
-    fontFamily: "kreon, serif"
-  }}
->
-  <h2 style={{ color: "#f5f5f5", fontSize: "2rem", marginBottom: "1rem" }}>
-    ⭐ Share Your Suggestions
-  </h2>
-  <p style={{ color: "#ccc", marginBottom: "1.5rem" }}>
-    We'd love to hear your thoughts about <strong style={{ color: "#22c55e" }}>Adjunct</strong>.  
-    we need your help us improve and grow.
-  </p>
+            </>
+          )}
 
-  <form onSubmit={(e) => { e.preventDefault(); alert("Thank you for your review!"); }}>
-    <div style={{ marginBottom: "1rem" }}>
-      <textarea 
-        placeholder="Write your review here..." 
-        style={{
-          width: "100%",
-          minHeight: "100px",
-          padding: "10px",
-          borderRadius: "8px",
-          border: "1px solid #333",
-          backgroundColor: "#121212",
-          color: "#f5f5f5",
-          resize: "none"
-        }}
+        </div>
+      </div>
+
+      <PopupForm
+        styles={styles}
+        responsiveStyles={responsiveStyles}
+        showPopup={showPopup}
+        handleClosePopup={handleClosePopup}
+        handleSubmit={handleSubmit}
+        formData={formData}
+        handleInputChange={handleInputChange}
+        inputFocusStyle={inputFocusStyle}
       />
-    </div>
-    <div style={{ display: "flex", justifyContent: "center", gap: "1rem" }}>
-      <button 
-        type="submit" 
-        style={{
-          padding: "10px 20px",
-          backgroundColor: "#ffffff",
-          border: "none",
-          borderRadius: "6px",
-          color: "#000",
-          cursor: "pointer",
-          fontWeight: "600"
 
-        }}
-      >
-        Submit Review
-      </button>
-      <button 
-        type="reset" 
-        style={{
-          padding: "10px 20px",
-          backgroundColor: "#333",
-          border: "none",
-          borderRadius: "6px",
-          color: "#fff",
-          cursor: "pointer"
-        }}
-      >
-        Clear
-      </button>
-    </div>
-  </form>
-</div>
-
-        {/* FOOTER */}
-        <footer style={styles.footer}>
-          {/* Contact Information */}
-          <div style={{ marginTop: "1.5rem", textAlign: "center" }}>
-            <h3 style={{ color: "#f5f5f5", fontSize: "1.1rem", marginBottom: "1rem" }}>Contact Us</h3>
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", alignItems: "center" }}>
-              <p style={{ color: "#ccc", margin: "0" }}>
-                <strong>Email:</strong> contact@adjunct.in
-              </p>
-              <p style={{ color: "#ccc", margin: "0" }}>
-                <strong>Location:</strong> India
-              </p>
-              <p style={{ color: "#ccc", margin: "0" }}>
-                <strong>Support:</strong> Available 24/7
-              </p>
-            </div>
-          </div>
-        </footer>
-          </div>
-        </>
-      )}
-
-      {/* POPUP FORM */}
-      {showPopup && (
-        <div style={styles.popupOverlay} onClick={handleClosePopup}>
-          <div 
-            className="popup-form"
-            style={{
-              ...responsiveStyles.popupForm,
-              position: "absolute",
-              left: "50%",
-              top: "32px", // Just below the header
-              transform: "translateX(-50%)", // Center horizontally only
-            }} 
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 style={responsiveStyles.popupTitle}>Join the Waitlist</h2>
-            <form onSubmit={handleSubmit}>
-              <div style={styles.formGroup}>
-                <label style={styles.formLabel} htmlFor="name">Full Name</label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  style={styles.formInput}
-                  onFocus={(e) => Object.assign(e.target.style, inputFocusStyle)}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = "#333";
-                    e.target.style.boxShadow = "none";
-                  }}
-                  required
-                />
-              </div>
-              <div style={styles.formGroup}>
-                <label style={styles.formLabel} htmlFor="email">Email Address</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  style={styles.formInput}
-                  onFocus={(e) => Object.assign(e.target.style, inputFocusStyle)}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = "#333";
-                    e.target.style.boxShadow = "none";
-                  }}
-                  required
-                />
-              </div>
-              <div style={styles.formGroup}>
-                <label style={styles.formLabel} htmlFor="phone">Phone Number</label>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  style={styles.formInput}
-                  onFocus={(e) => Object.assign(e.target.style, inputFocusStyle)}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = "#333";
-                    e.target.style.boxShadow = "none";
-                  }}
-                />
-              </div>
-              <div style={styles.formGroup}>
-                <label style={styles.formLabel} htmlFor="reason">Why are you interested in Adjunct? (Optional)</label>
-                <textarea
-                  id="reason"
-                  name="reason"
-                  value={formData.reason}
-                  onChange={handleInputChange}
-                  style={styles.formTextarea}
-                  onFocus={(e) => Object.assign(e.target.style, inputFocusStyle)}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = "#333";
-                    e.target.style.boxShadow = "none";
-                  }}
-                  placeholder="Tell us why you're interested in our messaging platform..."
-                />
-              </div>
-              <div style={styles.formGroup}>
-                <label style={styles.formLabel} htmlFor="referral">How did you hear about us?</label>
-                <select
-                  id="referral"
-                  name="referral"
-                  value={formData.referral}
-                  onChange={handleInputChange}
-                  style={styles.formSelect}
-                  onFocus={(e) => Object.assign(e.target.style, inputFocusStyle)}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = "#333";
-                    e.target.style.boxShadow = "none";
-                  }}
-                  required
-                >
-                  <option value="">Select an option</option>
-                  <option value="family">Family</option>
-                  <option value="friends">Friends</option>
-                  <option value="social-media">Social Media</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-              <div style={responsiveStyles.formButtons}>
-                <button 
-                  type="submit" 
-                  style={styles.buttonPrimary}
-                >
-                  Submit
-                </button>
-                <button 
-                  type="button" 
-                  style={styles.buttonSecondary}
-                  onClick={handleClosePopup}
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* SUCCESS POPUP */}
-      {showSuccessPopup && (
-  <div style={styles.popupOverlay} onClick={() => setShowSuccessPopup(false)}>
-    <div
-      className="success-popup"
-      style={{
-        ...styles.successPopup,
-        position: "absolute",
-        left: "50%",
-        top: isMobileView ? "5%" : "10%",   // 👈 show at the start of page in mobile
-        transform: isMobileView ? "translateX(-50%)" : "translateX(-50%)", // 👈 no Y shifting in mobile
-        marginTop: isMobileView ? "1rem" : "0", // 👈 little spacing from very top
-      }}
-      onClick={(e) => e.stopPropagation()}
-    >
-      <h2 style={styles.successTitle}>Thank You!</h2>
-      <div style={styles.successIcon}>✅</div>
-      <p style={styles.successMessage}>
-        You've successfully joined the Adjunct waitlist! We're excited to have you on board.
-      </p>
-      <p style={styles.successSubMessage}>
-        We'll be in touch soon with updates about our launch. Your submission has been saved and you'll receive notifications about our progress.
-      </p>
-      <div style={styles.formButtons}>
-        <button
-          style={styles.successButton}
-          onClick={() => setShowSuccessPopup(false)}
-        >
-          Got it!
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
-        </div>
-      </div>
+      <SuccessPopup
+        styles={styles}
+        showSuccessPopup={showSuccessPopup}
+        setShowSuccessPopup={setShowSuccessPopup}
+        isMobileView={isMobileView}
+      />
     </>
   );
 }
