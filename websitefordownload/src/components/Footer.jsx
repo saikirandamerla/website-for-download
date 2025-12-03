@@ -1,11 +1,19 @@
 import React from 'react';
 import { Twitter, Linkedin, Github, Mail, MapPin, Globe } from 'lucide-react';
 
-const Footer = ({ styles, onOpenTerms }) => {
+const Footer = ({
+    styles,
+    responsiveStyles,
+    onOpenTerms,
+    onOpenFeatures,
+    onOpenSecurity,
+    onOpenRoadmap,
+    onOpenPrivacyPolicy
+}) => {
     return (
         <footer style={styles.footer}>
-            <div style={styles.footerContainer}>
-                <div style={styles.footerContent}>
+            <div style={responsiveStyles?.footerContainer || styles.footerContainer}>
+                <div style={responsiveStyles?.footerContent || styles.footerContent}>
                     {/* Brand Column */}
                     <div style={styles.footerBrand}>
                         <h2 style={styles.footerLogo}>Adjunct</h2>
@@ -14,36 +22,23 @@ const Footer = ({ styles, onOpenTerms }) => {
                             Secure, intelligent, and designed for the modern world.
                         </p>
                         <div style={styles.socialLinks}>
-                            <a href="#" style={styles.socialIcon}><Twitter size={20} /></a>
-                            <a href="#" style={styles.socialIcon}><Linkedin size={20} /></a>
-                            <a href="#" style={styles.socialIcon}><Github size={20} /></a>
+                            <a href="https://x.com/Adjunctpa" style={styles.socialIcon}><Twitter size={20} /></a>
+                            <a href="https://www.linkedin.com/company/adjunct-org/" style={styles.socialIcon}><Linkedin size={20} /></a>
                         </div>
                     </div>
 
                     {/* Quick Links */}
-                    <div style={styles.footerColumn}>
+                    <div style={responsiveStyles?.footerColumn || styles.footerColumn}>
                         <h3 style={styles.footerTitle}>Product</h3>
                         <div style={styles.footerLinks}>
-                            <a href="#" style={styles.footerLink}>Features</a>
-                            <a href="#" style={styles.footerLink}>Security</a>
-                            <a href="#" style={styles.footerLink}>Roadmap</a>
-                            <a href="#" style={styles.footerLink}>Pricing</a>
-                        </div>
-                    </div>
-
-                    {/* Company */}
-                    <div style={styles.footerColumn}>
-                        <h3 style={styles.footerTitle}>Company</h3>
-                        <div style={styles.footerLinks}>
-                            <a href="#" style={styles.footerLink}>About Us</a>
-                            <a href="#" style={styles.footerLink}>Careers</a>
-                            <a href="#" style={styles.footerLink}>Blog</a>
-                            <a href="#" style={styles.footerLink}>Contact</a>
+                            <a href="#" onClick={(e) => { e.preventDefault(); onOpenFeatures && onOpenFeatures(); }} style={styles.footerLink}>Features</a>
+                            <a href="#" onClick={(e) => { e.preventDefault(); onOpenSecurity && onOpenSecurity(); }} style={styles.footerLink}>Security</a>
+                            <a href="#" onClick={(e) => { e.preventDefault(); onOpenRoadmap && onOpenRoadmap(); }} style={styles.footerLink}>Roadmap</a>
                         </div>
                     </div>
 
                     {/* Contact Info */}
-                    <div style={styles.footerColumn}>
+                    <div style={responsiveStyles?.footerColumn || styles.footerColumn}>
                         <h3 style={styles.footerTitle}>Contact Us</h3>
                         <div style={styles.footerLinks}>
                             <div style={styles.footerLink}>
@@ -66,7 +61,16 @@ const Footer = ({ styles, onOpenTerms }) => {
                 <div style={styles.copyright}>
                     <p>© {new Date().getFullYear()} Adjunct. All rights reserved.</p>
                     <div style={{ display: "flex", gap: "2rem" }}>
-                        <a href="#" style={styles.footerLink}>Privacy Policy</a>
+                        <a
+                            href="#"
+                            style={styles.footerLink}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                if (onOpenPrivacyPolicy) onOpenPrivacyPolicy();
+                            }}
+                        >
+                            Privacy Policy
+                        </a>
                         <a
                             href="#"
                             style={styles.footerLink}

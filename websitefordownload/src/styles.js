@@ -1,11 +1,11 @@
-const fontFamily = "'Outfit', sans-serif";
+const fontFamily = "'Inter', sans-serif";
 const fontWeightNormal = "400";
 
 export const styles = {
     container: {
         fontFamily,
         fontWeight: fontWeightNormal,
-        color: "#f5f5f5",
+        color: "var(--text-primary)",
         // backgroundColor: "#0d0d0d", // Removed to show Background component
         position: "relative",
         zIndex: 1,
@@ -14,96 +14,7 @@ export const styles = {
         minHeight: "100vh",
     },
     // Global scrollbar hiding styles
-    globalStyles: `
-    * {
-      cursor: none !important;
-    }
-    
-    .popup-form::-webkit-scrollbar {
-      display: none;
-    }
-    .popup-form {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-    
-    @keyframes button3DFloat {
-      0%, 100% {
-        transform: translateY(0) rotateX(0deg);
-      }
-      50% {
-        transform: translateY(-3px) rotateX(2deg);
-      }
-    }
-    
-    .button-3d {
-      /* Animation removed to avoid conflict with new hover effects */
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    
-    .button-3d:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 114, 255, 0.4);
-    }
-    
-    .button-3d:active {
-      transform: translateY(1px);
-    }
-    
-    @keyframes popupFadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(-30px) scale(0.95);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    @keyframes logoSpaceReveal {
-      0% {
-        opacity: 0;
-        transform: scale(0.5);
-        filter: blur(20px);
-      }
-      50% {
-        opacity: 0.8;
-        transform: scale(1.1);
-        filter: blur(5px);
-      }
-      100% {
-        opacity: 1;
-        transform: scale(1);
-        filter: blur(0px);
-      }
-    }
-    
-    .gradient-button:hover {
-      transform: translateY(-3px) scale(1.02);
-      box-shadow: 0 8px 20px rgba(255, 255, 255, 0.3), 0 4px 12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 1);
-    }
-    
-    .gradient-button:active {
-      transform: translateY(-1px) scale(0.98);
-      box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2), 0 2px 6px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.9);
-    }
-    
-    .gradient-button::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-      transition: left 0.5s ease;
-    }
-    
-    .gradient-button:hover::before {
-      left: 100%;
-    }
-  `,
+    globalStyles: "",
     contentWrapper: {
         maxWidth: "1100px",
         margin: "0 auto",
@@ -127,7 +38,7 @@ export const styles = {
         borderRadius: "50px",
         maxWidth: "1000px",
         width: "calc(100% - 40px)",
-        border: "1px solid rgba(255, 255, 255, 0.08)",
+        border: "1px solid var(--glass-border)",
         boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
         transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
     },
@@ -157,7 +68,7 @@ export const styles = {
     },
     navLink: {
         textDecoration: "none",
-        color: "#ccc",
+        color: "var(--text-secondary)",
         fontSize: "0.95rem",
         fontWeight: "500",
     },
@@ -168,16 +79,17 @@ export const styles = {
     },
     text: {
         fontSize: "0.9rem",
-        color: "#ccc",
+        color: "var(--text-secondary)",
     },
     buttonPrimary: {
         paddingTop: "0.85rem",
         paddingBottom: "0.85rem",
         paddingLeft: "2.5rem",
         paddingRight: "2.5rem",
-        background: "linear-gradient(135deg, #00C6FF 0%, #0072FF 100%)",
-        color: "#ffffff",
+        background: "linear-gradient(135deg, var(--accent-secondary) 0%, var(--accent-primary) 100%)",
+        color: "var(--text-primary)",
         border: "none",
+        outline: "none",
         borderRadius: "12px",
         cursor: "pointer",
         fontSize: "1rem",
@@ -193,16 +105,17 @@ export const styles = {
         letterSpacing: "0.03em",
         textTransform: "uppercase",
         textShadow: "0 1px 2px rgba(0,0,0,0.2)",
+        fontFamily: "inherit",
     },
     buttonSecondary: {
         paddingTop: "0.75rem",
         paddingBottom: "0.75rem",
         paddingLeft: "1.5rem",
         paddingRight: "1.5rem",
-        background: "rgba(255, 255, 255, 0.05)",
+        background: "var(--glass-highlight)",
         border: "1px solid rgba(255, 255, 255, 0.2)",
         borderRadius: "12px",
-        color: "#ffffff",
+        color: "var(--text-primary)",
         cursor: "pointer",
         fontSize: "0.9rem",
         fontWeight: "600",
@@ -215,6 +128,7 @@ export const styles = {
         overflow: "hidden",
         backdropFilter: "blur(10px)",
         boxShadow: "0 4px 15px rgba(0, 0, 0, 0.2)",
+        fontFamily: "inherit",
     },
     buttonPrimaryHover: {
         transform: "translateY(2px)",
@@ -222,7 +136,7 @@ export const styles = {
     },
     buttonPrimaryActive: {
         transform: "translateY(4px)",
-        boxShadow: "0 0 0 #0056b3, inset 0 2px 4px rgba(0,0,0,0.3)",
+        boxShadow: "0 0 0 #0056b3, 0 4px 12px rgba(0, 114, 255, 0.3), inset 0 2px 4px rgba(0,0,0,0.3)",
     },
     heroWrapper: {
         maxWidth: "800px",
@@ -245,7 +159,7 @@ export const styles = {
     heroTitle: {
         fontSize: "4rem",
         marginBottom: "1.5rem",
-        color: "#ffffff",
+        color: "var(--text-primary)",
         fontWeight: "700",
         lineHeight: "1.1",
         textShadow: "0 0 40px rgba(0, 198, 255, 0.3)",
@@ -254,7 +168,7 @@ export const styles = {
     heroText: {
         fontSize: "1.2rem",
         marginBottom: "2rem",
-        color: "#ccc",
+        color: "var(--text-secondary)",
     },
     featuresGrid: {
         display: "grid",
@@ -266,7 +180,7 @@ export const styles = {
         backgroundColor: "rgba(255, 255, 255, 0.03)",
         backdropFilter: "blur(12px)",
         padding: "2rem",
-        border: "1px solid rgba(255, 255, 255, 0.08)",
+        border: "1px solid var(--glass-border)",
         boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2)",
         transition: "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
         transform: "scale(1)",
@@ -276,7 +190,7 @@ export const styles = {
     },
     featureCardHover: {
         transform: "translateY(-10px)",
-        backgroundColor: "rgba(255, 255, 255, 0.06)",
+        backgroundColor: "var(--glass-highlight)",
         border: "1px solid rgba(255, 255, 255, 0.2)",
         boxShadow: "0 20px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 198, 255, 0.15)",
     },
@@ -284,11 +198,11 @@ export const styles = {
         marginTop: "1rem",
         fontWeight: "600",
         fontSize: "1.125rem",
-        color: "#fff",
+        color: "var(--text-primary)",
     },
     featureDesc: {
         marginTop: "0.5rem",
-        color: "#ccc",
+        color: "var(--text-secondary)",
         whiteSpace: "pre-line",
     },
     footer: {
@@ -301,7 +215,7 @@ export const styles = {
         zIndex: 10,
     },
     footerContainer: {
-        maxWidth: "1100px",
+        maxWidth: "100%",
         margin: "0 auto",
         padding: "0 2rem",
         display: "flex",
@@ -329,19 +243,19 @@ export const styles = {
     footerLogo: {
         fontSize: "1.8rem",
         fontWeight: "700",
-        color: "#fff",
+        color: "var(--text-primary)",
         letterSpacing: "-0.02em",
-        background: "linear-gradient(90deg, #fff, #ccc)",
+        background: "linear-gradient(90deg, var(--text-primary), var(--text-secondary))",
         WebkitBackgroundClip: "text",
         WebkitTextFillColor: "transparent",
     },
     footerDesc: {
-        color: "#999",
+        color: "var(--text-muted)",
         fontSize: "0.95rem",
         lineHeight: "1.6",
     },
     footerTitle: {
-        color: "#fff",
+        color: "var(--text-primary)",
         fontSize: "1.1rem",
         fontWeight: "600",
         marginBottom: "0.5rem",
@@ -352,7 +266,7 @@ export const styles = {
         gap: "0.8rem",
     },
     footerLink: {
-        color: "#999",
+        color: "var(--text-muted)",
         textDecoration: "none",
         fontSize: "0.95rem",
         transition: "color 0.2s ease",
@@ -367,21 +281,21 @@ export const styles = {
         marginTop: "0.5rem",
     },
     socialIcon: {
-        color: "#ccc",
+        color: "var(--text-secondary)",
         transition: "all 0.3s ease",
         cursor: "pointer",
         padding: "0.5rem",
-        backgroundColor: "rgba(255, 255, 255, 0.05)",
+        backgroundColor: "var(--glass-highlight)",
         borderRadius: "50%",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
     },
     copyright: {
-        borderTop: "1px solid rgba(255, 255, 255, 0.05)",
+        borderTop: "1px solid var(--glass-highlight)",
         paddingTop: "2rem",
         textAlign: "center",
-        color: "#666",
+        color: "var(--text-muted)",
         fontSize: "0.9rem",
         display: "flex",
         justifyContent: "space-between",
@@ -400,7 +314,7 @@ export const styles = {
         display: "flex",
         justifyContent: "center",
         alignItems: "flex-start",
-        paddingTop: "120px",
+        paddingTop: "60px",
         zIndex: 1000,
         overflowY: "auto",
     },
@@ -423,7 +337,7 @@ export const styles = {
     popupTitle: {
         fontSize: "2rem",
         fontWeight: "700",
-        background: "linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%)",
+        background: "linear-gradient(135deg, var(--text-primary) 0%, #e0e0e0 100%)",
         WebkitBackgroundClip: "text",
         WebkitTextFillColor: "transparent",
         backgroundClip: "text",
@@ -433,7 +347,7 @@ export const styles = {
     },
     popupSubtitle: {
         fontSize: "0.95rem",
-        color: "#999",
+        color: "var(--text-muted)",
         textAlign: "center",
         marginBottom: "2rem",
         fontWeight: "400",
@@ -479,6 +393,7 @@ export const styles = {
         fontSize: "0.95rem",
         transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
         outline: "none",
+        fontFamily: "inherit",
     },
     formSelect: {
         width: "100%",
@@ -491,6 +406,7 @@ export const styles = {
         transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
         outline: "none",
         cursor: "pointer",
+        fontFamily: "inherit",
     },
     formTextarea: {
         width: "100%",
@@ -513,7 +429,7 @@ export const styles = {
         justifyContent: "center",
     },
     gradientButton: {
-        background: "linear-gradient(135deg, #ffffff 0%, #f0f0f0 50%, #e0e0e0 100%)",
+        background: "linear-gradient(135deg, var(--text-primary) 0%, #f0f0f0 50%, #e0e0e0 100%)",
         color: "#000",
         border: "none",
         padding: "0.875rem 2.5rem",
@@ -527,6 +443,7 @@ export const styles = {
         overflow: "hidden",
         letterSpacing: "0.02em",
         textTransform: "uppercase",
+        fontFamily: "inherit",
     },
     closeButton: {
         position: "absolute",
@@ -541,7 +458,7 @@ export const styles = {
         alignItems: "center",
         justifyContent: "center",
         cursor: "pointer",
-        color: "#fff",
+        color: "var(--text-primary)",
         fontSize: "1.2rem",
         transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
         zIndex: 10,
@@ -563,21 +480,21 @@ export const styles = {
     successTitle: {
         fontSize: "2rem",
         fontWeight: "700",
-        color: "#f5f5f5",
+        color: "var(--text-primary)",
         marginBottom: "1.5rem",
         textAlign: "center",
         textShadow: "0 2px 4px rgba(0, 0, 0, 0.5)",
     },
     successMessage: {
         fontSize: "1.1rem",
-        color: "#f5f5f5",
+        color: "var(--text-primary)",
         marginBottom: "1rem",
         lineHeight: "1.6",
         textAlign: "center",
     },
     successSubMessage: {
         fontSize: "0.95rem",
-        color: "#ccc",
+        color: "var(--text-secondary)",
         marginBottom: "2rem",
         lineHeight: "1.5",
         textAlign: "center",
@@ -609,7 +526,7 @@ export const styles = {
     },
     bigBlock: {
         flex: 2,
-        backgroundColor: "rgba(20, 20, 20, 0.6)",
+        backgroundColor: "var(--glass-bg)",
         backdropFilter: "blur(12px)",
         border: "1px solid rgba(255, 255, 255, 0.1)",
         padding: "2rem",
@@ -647,7 +564,7 @@ export const styles = {
     },
     smallBlock: {
         flex: 1,
-        backgroundColor: "rgba(20, 20, 20, 0.6)",
+        backgroundColor: "var(--glass-bg)",
         backdropFilter: "blur(12px)",
         border: "1px solid rgba(255, 255, 255, 0.1)",
         padding: "1.5rem",
@@ -667,7 +584,7 @@ export const styles = {
         display: "none",
         backgroundColor: "transparent",
         border: "none",
-        color: "#f5f5f5",
+        color: "var(--text-primary)",
         cursor: "pointer",
         padding: "0.5rem",
         zIndex: 101,
@@ -717,7 +634,7 @@ export const styles = {
     },
     mobileNavLink: {
         textDecoration: "none",
-        color: "#ccc",
+        color: "var(--text-secondary)",
         fontSize: "1rem",
         fontWeight: "500",
         paddingTop: "0.75rem",
@@ -756,7 +673,7 @@ export const styles = {
     logoText: {
         fontSize: "3rem",
         fontWeight: "600",
-        color: "#ffffff",
+        color: "var(--text-primary)",
         textShadow: "0 0 20px rgba(255, 255, 255, 0.5)",
         display: "flex",
         lineHeight: "1"
@@ -879,5 +796,6 @@ export const getResponsiveStyles = (isMobileView) => {
             paddingRight: mobile ? "0.8rem" : "0.9rem",
             fontSize: mobile ? "0.85rem" : "0.9rem",
         },
+
     };
 };

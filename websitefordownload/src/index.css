@@ -1,6 +1,27 @@
 @import "tailwindcss";
 
-* {
-  cursor: none !important;
+:root {
+  /* Core Colors */
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #141414;
+  --bg-tertiary: #1f1f1f;
+
+  /* Text Colors */
+  --text-primary: #ffffff;
+  --text-secondary: #a1a1a1;
+  --text-muted: #666666;
+
+  /* Brand Colors */
+  --accent-primary: #0072FF;
+  --accent-secondary: #00C6FF;
+
+  /* Functional Colors */
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-bg: rgba(20, 20, 20, 0.6);
+  --glass-highlight: rgba(255, 255, 255, 0.05);
 }
 
+* {
+  cursor: none !important;
+  font-family: 'Inter', sans-serif;
+}

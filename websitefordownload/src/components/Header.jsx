@@ -13,7 +13,7 @@ const Header = ({
     setShowDocsPage
 }) => {
     return (
-        <header style={styles.header}>
+        <header style={styles.header} className="nav-shine">
             <div style={styles.headerContent}>
                 {/* Left: logo + navigation */}
                 <div style={responsiveStyles.leftSection}>

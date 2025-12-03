@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { styles } from '../styles';
+import { Loader2, Lock, Check } from 'lucide-react';
 
 const EncryptionTool = () => {
     const [text, setText] = useState("");
@@ -81,7 +82,6 @@ const EncryptionTool = () => {
     return (
         <div style={{
             textAlign: "center",
-            fontFamily: "kreon, serif",
             padding: "2rem 1rem",
             maxWidth: "100%",
         }}>
@@ -108,6 +108,7 @@ const EncryptionTool = () => {
                         maxWidth: "100%",
                         fontSize: "1rem",
                         boxSizing: "border-box",
+                        fontFamily: "inherit",
                     }}
                 />
                 <button
@@ -142,7 +143,17 @@ const EncryptionTool = () => {
                         }
                     }}
                 >
-                    {isEncrypting ? "Encrypting..." : "Encrypt"}
+                    {isEncrypting ? (
+                        <>
+                            <Loader2 className="animate-spin" size={18} style={{ marginRight: '8px' }} />
+                            Encrypting...
+                        </>
+                    ) : (
+                        <>
+                            <Lock size={18} style={{ marginRight: '8px' }} />
+                            Encrypt
+                        </>
+                    )}
                 </button>
             </div>
 
@@ -153,7 +164,17 @@ const EncryptionTool = () => {
                 maxWidth: "100%",
             }}>
                 {isEncrypting ? (
-                    <div style={{ color: '#ccc', fontSize: "1rem" }}>🔄 Encrypting…</div>
+                    <div style={{
+                        color: 'var(--text-secondary)',
+                        fontSize: "1rem",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "0.75rem"
+                    }}>
+                        <Loader2 className="animate-spin" size={20} color="var(--accent-secondary)" />
+                        <span>Encrypting data...</span>
+                    </div>
                 ) : encrypted ? (
                     <div style={{
                         display: 'inline-block',
@@ -165,7 +186,12 @@ const EncryptionTool = () => {
                             fontWeight: '700',
                             marginBottom: '0.5rem',
                             fontSize: window.innerWidth <= 768 ? "1rem" : "1.1rem",
-                        }}>🔐 Encrypted Text</div>
+                            display: "flex",
+                            alignItems: "center",
+                        }}>
+                            <Lock size={18} className="text-green-500" style={{ marginRight: '8px', color: '#22c55e' }} />
+                            Encrypted Text
+                        </div>
                         <div style={{
                             padding: window.innerWidth <= 768 ? '10px' : '12px 16px',
                             border: '1px solid #ccc',
@@ -198,7 +224,12 @@ const EncryptionTool = () => {
                                     borderColor: copied ? '#22c55e' : styles.buttonSecondary.border.split(' ')[2],
                                 }}
                             >
-                                {copied ? '✓ Copied!' : 'Copy'}
+                                {copied ? (
+                                    <>
+                                        <Check size={16} style={{ marginRight: '6px' }} />
+                                        Copied!
+                                    </>
+                                ) : 'Copy'}
                             </button>
                             <button
                                 onClick={() => { setEncrypted(''); setText(''); }}

@@ -2,6 +2,10 @@ import React, { useState, useEffect, useMemo } from "react";
 import { MessagesSquare, Bot, Lock, Smartphone, Brain, Command, RefreshCw } from "lucide-react";
 import TermsPage from "./TermsPage";
 import DocsPage from "./DocsPage";
+import FeaturesPage from "./components/FeaturesPage";
+import SecurityPage from "./components/SecurityPage";
+import RoadmapPage from "./components/RoadmapPage";
+import PrivacyPolicyPage from "./components/PrivacyPolicyPage";
 import Background from "./components/Background";
 import LogoAnimation from "./components/LogoAnimation";
 import Header from "./components/Header";
@@ -31,7 +35,7 @@ export default function App() {
     },
     {
       icon: <Lock size={32} color="#e5e7eb" />,
-      title: "End to End Encryption",
+      title: "Asymmetric Encryption",
       desc: "This security model relies on a pair of keys: one public for encryption and one private for decryption. The advanced mathematics behind this process makes it virtually impossible to compromise, ensuring that your communication remains private, secure, and trustworthy.",
     },
     {
@@ -69,6 +73,10 @@ export default function App() {
   const [isMobileView, setIsMobileView] = useState(false);
   const [showDocsPage, setShowDocsPage] = useState(false);
   const [showTermsPage, setShowTermsPage] = useState(false);
+  const [showFeaturesPage, setShowFeaturesPage] = useState(false);
+  const [showSecurityPage, setShowSecurityPage] = useState(false);
+  const [showRoadmapPage, setShowRoadmapPage] = useState(false);
+  const [showPrivacyPolicyPage, setShowPrivacyPolicyPage] = useState(false);
   const [showLogoAnimation, setShowLogoAnimation] = useState(true);
   const [showMainContent, setShowMainContent] = useState(false);
   const [formData, setFormData] = useState({
@@ -274,16 +282,18 @@ This submission was also saved locally in the browser.
 
       <LogoAnimation showLogoAnimation={showLogoAnimation} styles={styles} />
 
-      <Header
-        styles={styles}
-        responsiveStyles={responsiveStyles}
-        isMobileView={isMobileView}
-        mobileMenuOpen={mobileMenuOpen}
-        toggleMobileMenu={toggleMobileMenu}
-        closeMobileMenu={closeMobileMenu}
-        setShowPopup={setShowPopup}
-        setShowDocsPage={setShowDocsPage}
-      />
+      {!showTermsPage && (
+        <Header
+          styles={styles}
+          responsiveStyles={responsiveStyles}
+          isMobileView={isMobileView}
+          mobileMenuOpen={mobileMenuOpen}
+          toggleMobileMenu={toggleMobileMenu}
+          closeMobileMenu={closeMobileMenu}
+          setShowPopup={setShowPopup}
+          setShowDocsPage={setShowDocsPage}
+        />
+      )}
 
       {/* Main App Content */}
       <div style={{
@@ -295,11 +305,19 @@ This submission was also saved locally in the browser.
       }}>
         <div style={styles.container}>
 
-          {/* Show Docs Page, Terms Page, or Main Content */}
+          {/* Show Docs Page, Terms Page, Product Pages, or Main Content */}
           {showDocsPage ? (
             <DocsPage onBack={() => setShowDocsPage(false)} />
           ) : showTermsPage ? (
             <TermsPage onBack={() => setShowTermsPage(false)} />
+          ) : showFeaturesPage ? (
+            <FeaturesPage onBack={() => setShowFeaturesPage(false)} />
+          ) : showSecurityPage ? (
+            <SecurityPage onBack={() => setShowSecurityPage(false)} />
+          ) : showRoadmapPage ? (
+            <RoadmapPage onBack={() => setShowRoadmapPage(false)} />
+          ) : showPrivacyPolicyPage ? (
+            <PrivacyPolicyPage onBack={() => setShowPrivacyPolicyPage(false)} />
           ) : (
             <>
               {/* MAIN CONTENT */}
@@ -332,9 +350,26 @@ This submission was also saved locally in the browser.
 
                 <Footer
                   styles={styles}
+                  responsiveStyles={responsiveStyles}
                   onOpenTerms={() => {
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                     setShowTermsPage(true);
+                  }}
+                  onOpenFeatures={() => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    setShowFeaturesPage(true);
+                  }}
+                  onOpenSecurity={() => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    setShowSecurityPage(true);
+                  }}
+                  onOpenRoadmap={() => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    setShowRoadmapPage(true);
+                  }}
+                  onOpenPrivacyPolicy={() => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    setShowPrivacyPolicyPage(true);
                   }}
                 />
               </div>
