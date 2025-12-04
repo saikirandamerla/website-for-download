@@ -292,6 +292,9 @@ This submission was also saved locally in the browser.
           closeMobileMenu={closeMobileMenu}
           setShowPopup={setShowPopup}
           setShowDocsPage={setShowDocsPage}
+          setShowFeaturesPage={setShowFeaturesPage}
+          setShowSecurityPage={setShowSecurityPage}
+          setShowRoadmapPage={setShowRoadmapPage}
         />
       )}
 
@@ -309,7 +312,11 @@ This submission was also saved locally in the browser.
           {showDocsPage ? (
             <DocsPage onBack={() => setShowDocsPage(false)} />
           ) : showTermsPage ? (
-            <TermsPage onBack={() => setShowTermsPage(false)} />
+            <TermsPage
+              onBack={() => setShowTermsPage(false)}
+              styles={styles}
+              responsiveStyles={responsiveStyles}
+            />
           ) : showFeaturesPage ? (
             <FeaturesPage onBack={() => setShowFeaturesPage(false)} />
           ) : showSecurityPage ? (

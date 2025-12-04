@@ -1,6 +1,7 @@
 import React from 'react';
 import { Menu, X } from "lucide-react";
 import logoImg from "../assets/logo.png";
+import { motion } from "framer-motion";
 
 const Header = ({
     styles,
@@ -10,10 +11,26 @@ const Header = ({
     toggleMobileMenu,
     closeMobileMenu,
     setShowPopup,
-    setShowDocsPage
+    setShowDocsPage,
+    setShowFeaturesPage,
+    setShowSecurityPage,
+    setShowRoadmapPage
 }) => {
+    const handleNavClick = (setter) => {
+        setter(true);
+        setShowDocsPage(false);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (isMobileView) closeMobileMenu();
+    };
+
     return (
-        <header style={styles.header} className="nav-shine">
+        <motion.header
+            style={styles.header}
+            className="nav-shimmer"
+            initial={{ y: -100, x: "-50%", opacity: 0 }}
+            animate={{ y: 0, x: "-50%", opacity: 1 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        >
             <div style={styles.headerContent}>
                 {/* Left: logo + navigation */}
                 <div style={responsiveStyles.leftSection}>
@@ -21,6 +38,9 @@ const Header = ({
                         style={{ ...responsiveStyles.logo, cursor: "pointer" }}
                         onClick={() => {
                             setShowDocsPage(false);
+                            setShowFeaturesPage(false);
+                            setShowSecurityPage(false);
+                            setShowRoadmapPage(false);
                             window.scrollTo({ top: 0, behavior: 'smooth' });
                         }}
                     >
@@ -30,6 +50,9 @@ const Header = ({
                     {/* Desktop Navigation */}
                     {!isMobileView && (
                         <nav style={styles.nav}>
+                            <a style={{ ...styles.navLink, cursor: "pointer" }} onClick={() => handleNavClick(setShowFeaturesPage)}>Features</a>
+                            <a style={{ ...styles.navLink, cursor: "pointer" }} onClick={() => handleNavClick(setShowSecurityPage)}>Security</a>
+                            <a style={{ ...styles.navLink, cursor: "pointer" }} onClick={() => handleNavClick(setShowRoadmapPage)}>Roadmap</a>
                             <a
                                 style={{ ...styles.navLink, cursor: "pointer" }}
                                 onClick={() => document.querySelector('footer').scrollIntoView({ behavior: 'smooth' })}
@@ -75,6 +98,9 @@ const Header = ({
                     style={styles.mobileMenu}
                 >
                     <div style={styles.mobileNav}>
+                        <a style={{ ...styles.mobileNavLink, cursor: "pointer" }} onClick={() => handleNavClick(setShowFeaturesPage)}>Features</a>
+                        <a style={{ ...styles.mobileNavLink, cursor: "pointer" }} onClick={() => handleNavClick(setShowSecurityPage)}>Security</a>
+                        <a style={{ ...styles.mobileNavLink, cursor: "pointer" }} onClick={() => handleNavClick(setShowRoadmapPage)}>Roadmap</a>
                         <a
                             style={{ ...styles.mobileNavLink, cursor: "pointer" }}
                             onClick={() => {
@@ -101,7 +127,7 @@ const Header = ({
                     </button>
                 </div>
             )}
-        </header>
+        </motion.header>
     );
 };
 

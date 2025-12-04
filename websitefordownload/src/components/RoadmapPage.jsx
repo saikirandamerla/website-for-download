@@ -40,9 +40,9 @@ const RoadmapPage = ({ onBack }) => {
 
             <div style={{ position: "relative", paddingLeft: "2rem", borderLeft: "2px solid rgba(255,255,255,0.1)" }}>
                 {[
-                    { icon: Flag, title: "Q1 2024: Beta Launch", desc: "Initial release to early access users with core encryption features.", status: "In Progress" },
-                    { icon: Map, title: "Q2 2024: Mobile Apps", desc: "Native iOS and Android applications for secure messaging on the go.", status: "In Progress" },
-                    { icon: Rocket, title: "Q3 2024: Enterprise API", desc: "SDKs for businesses to integrate secure messaging into their products.", status: "Planned" }
+                    { icon: Flag, title: "Q1: Beta Launch", desc: "Initial release to early access users with core encryption features.", status: "In Progress" },
+                    { icon: Map, title: "Q2: Mobile Apps", desc: "Native iOS and Android applications for secure messaging on the go.", status: "In Progress" },
+                    { icon: Rocket, title: "Q3: Enterprise API", desc: "SDKs for businesses to integrate secure messaging into their products.", status: "Planned" }
                 ].map((item, index) => (
                     <div key={index} style={{ marginBottom: "3rem", position: "relative" }}>
                         <div style={{
