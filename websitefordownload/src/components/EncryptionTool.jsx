@@ -1,77 +1,69 @@
 import React, { useState } from 'react';
 import { styles } from '../styles';
-import { Loader2, Lock, Check } from 'lucide-react';
+import { Loader2, Lock, Check, AlertCircle } from 'lucide-react';
+
+const API_URL = 'http://localhost:3001/api';
 
 const EncryptionTool = () => {
     const [text, setText] = useState("");
     const [encrypted, setEncrypted] = useState("");
+    const [encryptionData, setEncryptionData] = useState(null);
     const [isEncrypting, setIsEncrypting] = useState(false);
     const [encryptedAt, setEncryptedAt] = useState(null);
     const [copied, setCopied] = useState(false);
+    const [error, setError] = useState(null);
 
-    const handleEncrypt = () => {
-        // Create a UTF-8 safe base64 encoder
-        const utf8ToB64 = (str) => {
-            try {
-                const uint8 = new TextEncoder().encode(str);
-                let binary = "";
-                for (let i = 0; i < uint8.length; i++) {
-                    binary += String.fromCharCode(uint8[i]);
-                }
-                return btoa(binary);
-            } catch (err) {
-                // Fallback to simple btoa if TextEncoder isn't available
-                try {
-                    return btoa(str);
-                } catch (e) {
-                    console.error('Base64 encode failed:', e);
-                    return '';
-                }
-            }
-        };
-
-        // Generate a short random nonce (hex) using crypto API
-        const generateNonce = (length = 8) => {
-            try {
-                const arr = new Uint8Array(length);
-                window.crypto.getRandomValues(arr);
-                return Array.from(arr).map((b) => b.toString(16).padStart(2, '0')).join('');
-            } catch (err) {
-                // fallback to Math.random
-                let s = '';
-                for (let i = 0; i < length; i++) s += Math.floor(Math.random() * 256).toString(16).padStart(2, '0');
-                return s;
-            }
-        };
-
-        // Ensure non-empty input
+    const handleEncrypt = async () => {
         if (text.trim() === '') return;
+
         setIsEncrypting(true);
         setCopied(false);
+        setError(null);
 
-        // Simulate a short processing delay for UX and create a unique payload
-        setTimeout(() => {
-            try {
-                const nonce = generateNonce(8);
-                const timestamp = new Date().toISOString();
-                // Combine original text with nonce and timestamp so repeated encryptions produce different outputs
-                const payload = JSON.stringify({ text, nonce, timestamp });
-                const encoded = utf8ToB64(payload);
-                setEncrypted(encoded);
-                setEncryptedAt(new Date().toLocaleString());
-            } catch (err) {
-                console.error('Encryption error:', err);
-                setEncrypted('');
-            } finally {
-                setIsEncrypting(false);
+        try {
+            const response = await fetch(`${API_URL}/encrypt`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: text })
+            });
+
+            if (!response.ok) {
+                throw new Error('Encryption failed');
             }
-        }, 250);
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Store the full encryption data (encrypted, iv, authTag)
+                setEncryptionData(data);
+                // Display the encrypted text
+                setEncrypted(data.encrypted);
+                setEncryptedAt(new Date(data.timestamp).toLocaleString());
+            } else {
+                throw new Error(data.error || 'Encryption failed');
+            }
+        } catch (err) {
+            console.error('Encryption error:', err);
+            setError('Failed to encrypt message. Make sure the encryption server is running on port 3001.');
+            setEncrypted('');
+        } finally {
+            setIsEncrypting(false);
+        }
     };
 
     const handleCopyEncrypted = async () => {
         if (!encrypted) return;
         try {
-            await navigator.clipboard.writeText(encrypted);
+            // Copy the full encryption data as JSON for later decryption
+            const dataToCopy = JSON.stringify({
+                encrypted: encryptionData.encrypted,
+                iv: encryptionData.iv,
+                authTag: encryptionData.authTag
+            }, null, 2);
+
+            await navigator.clipboard.writeText(dataToCopy);
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
         } catch (err) {
@@ -82,10 +74,18 @@ const EncryptionTool = () => {
     return (
         <div style={{
             textAlign: "center",
-            padding: "2rem 1rem",
+            padding: "0 1rem",
             maxWidth: "100%",
         }}>
-            <h2 style={{ marginBottom: "1rem" }}>Try Our Simple Encryption Tool</h2>
+            <h2 style={{ marginBottom: "0.5rem" }}>Try Our Encryption Tool</h2>
+            <p style={{
+                color: "var(--text-secondary)",
+                fontSize: "0.9rem",
+                marginBottom: "1.5rem"
+            }}>
+                Server-side AES-256-GCM encryption - Each message gets unique encryption
+            </p>
+
             <div style={{
                 marginTop: "2rem",
                 display: "flex",
@@ -99,6 +99,7 @@ const EncryptionTool = () => {
                     type="text"
                     value={text}
                     onChange={(e) => setText(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleEncrypt()}
                     placeholder="Enter text to encrypt"
                     style={{
                         padding: "0.75rem",
@@ -113,16 +114,16 @@ const EncryptionTool = () => {
                 />
                 <button
                     onClick={handleEncrypt}
-                    disabled={!text.trim()}
+                    disabled={!text.trim() || isEncrypting}
                     className={text.trim() ? "gradient-button" : ""}
                     style={{
                         ...styles.buttonPrimary,
                         width: window.innerWidth <= 768 ? "100%" : "auto",
-                        opacity: text.trim() ? 1 : 0.5,
-                        cursor: text.trim() ? "pointer" : "not-allowed",
+                        opacity: text.trim() && !isEncrypting ? 1 : 0.5,
+                        cursor: text.trim() && !isEncrypting ? "pointer" : "not-allowed",
                     }}
                     onMouseEnter={(e) => {
-                        if (text.trim()) {
+                        if (text.trim() && !isEncrypting) {
                             Object.assign(e.currentTarget.style, styles.buttonPrimaryHover);
                         }
                     }}
@@ -133,12 +134,12 @@ const EncryptionTool = () => {
                         });
                     }}
                     onMouseDown={(e) => {
-                        if (text.trim()) {
+                        if (text.trim() && !isEncrypting) {
                             Object.assign(e.currentTarget.style, styles.buttonPrimaryActive);
                         }
                     }}
                     onMouseUp={(e) => {
-                        if (text.trim()) {
+                        if (text.trim() && !isEncrypting) {
                             Object.assign(e.currentTarget.style, styles.buttonPrimaryHover);
                         }
                     }}
@@ -157,6 +158,26 @@ const EncryptionTool = () => {
                 </button>
             </div>
 
+            {/* Error Message */}
+            {error && (
+                <div style={{
+                    marginTop: '1.5rem',
+                    padding: '1rem',
+                    background: 'rgba(239, 68, 68, 0.1)',
+                    border: '1px solid rgba(239, 68, 68, 0.3)',
+                    borderRadius: '8px',
+                    color: '#ef4444',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    justifyContent: 'center',
+                    fontSize: '0.9rem'
+                }}>
+                    <AlertCircle size={18} />
+                    <span>{error}</span>
+                </div>
+            )}
+
             <div style={{
                 marginTop: '2rem',
                 textAlign: 'center',
@@ -173,7 +194,7 @@ const EncryptionTool = () => {
                         gap: "0.75rem"
                     }}>
                         <Loader2 className="animate-spin" size={20} color="var(--accent-secondary)" />
-                        <span>Encrypting data...</span>
+                        <span>Encrypting with AES-256-GCM...</span>
                     </div>
                 ) : encrypted ? (
                     <div style={{
@@ -189,23 +210,47 @@ const EncryptionTool = () => {
                             display: "flex",
                             alignItems: "center",
                         }}>
-                            <Lock size={18} className="text-green-500" style={{ marginRight: '8px', color: '#22c55e' }} />
+                            <Lock size={18} style={{ marginRight: '8px', color: '#22c55e' }} />
                             Encrypted Text
                         </div>
                         <div style={{
                             padding: window.innerWidth <= 768 ? '10px' : '12px 16px',
-                            border: '1px solid #ccc',
+                            border: '1px solid rgba(0, 198, 255, 0.3)',
                             borderRadius: 8,
-                            background: '#0b0b0b',
-                            color: '#22c55e',
+                            background: 'rgba(0, 0, 0, 0.5)',
+                            color: '#00C6FF',
                             fontFamily: 'monospace',
                             wordBreak: "break-all",
-                            fontSize: window.innerWidth <= 768 ? "0.85rem" : "0.95rem",
+                            fontSize: window.innerWidth <= 768 ? "0.75rem" : "0.85rem",
                             maxWidth: "100%",
                             overflowX: "auto",
+                            maxHeight: "150px",
+                            overflowY: "auto",
                         }}>
                             {encrypted}
                         </div>
+
+                        {/* Show IV and Auth Tag info */}
+                        {encryptionData && (
+                            <div style={{
+                                marginTop: '0.75rem',
+                                padding: '0.75rem',
+                                background: 'rgba(139, 92, 246, 0.1)',
+                                border: '1px solid rgba(139, 92, 246, 0.2)',
+                                borderRadius: '6px',
+                                fontSize: '0.8rem',
+                                color: 'var(--text-secondary)',
+                                textAlign: 'left'
+                            }}>
+                                <div style={{ marginBottom: '0.25rem' }}>
+                                    <strong>IV:</strong> {encryptionData.iv.substring(0, 20)}...
+                                </div>
+                                <div>
+                                    <strong>Auth Tag:</strong> {encryptionData.authTag.substring(0, 20)}...
+                                </div>
+                            </div>
+                        )}
+
                         <div style={{
                             marginTop: '0.75rem',
                             display: 'flex',
@@ -227,12 +272,12 @@ const EncryptionTool = () => {
                                 {copied ? (
                                     <>
                                         <Check size={16} style={{ marginRight: '6px' }} />
-                                        Copied!
+                                        Copied Full Data!
                                     </>
-                                ) : 'Copy'}
+                                ) : 'Copy Encryption Data'}
                             </button>
                             <button
-                                onClick={() => { setEncrypted(''); setText(''); }}
+                                onClick={() => { setEncrypted(''); setText(''); setEncryptionData(null); setError(null); }}
                                 style={{
                                     ...styles.buttonSecondary,
                                     width: window.innerWidth <= 768 ? "100%" : "auto",
@@ -257,7 +302,10 @@ const EncryptionTool = () => {
                         fontSize: window.innerWidth <= 768 ? "0.9rem" : "1rem",
                         padding: "0 1rem",
                     }}>
-                        Enter text above and click Encrypt to create an encrypted string.
+                        Enter text above and click Encrypt to create a secure encrypted string.
+                        <div style={{ marginTop: '0.5rem', fontSize: '0.85rem', color: '#555' }}>
+                            💡 Each encryption is unique - try encrypting the same text twice!
+                        </div>
                     </div>
                 )}
             </div>

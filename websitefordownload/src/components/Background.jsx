@@ -1,129 +1,157 @@
-import React, { useRef, useMemo } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Stars, PerspectiveCamera } from '@react-three/drei';
+import React, { useRef, useMemo, useState, useEffect } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
-function NeuralFlux({ count = 1000 }) {
-    const mesh = useRef();
-    const { mouse, viewport } = useThree();
+// Simple Holographic Shape Component
+function HolographicShape({ position, shape, scale, rotationSpeed, color }) {
+    const meshRef = useRef();
+
+    useFrame((state) => {
+        if (!meshRef.current) return;
+        meshRef.current.rotation.x += rotationSpeed * 0.01;
+        meshRef.current.rotation.y += rotationSpeed * 0.015;
+        meshRef.current.rotation.z += rotationSpeed * 0.008;
+
+        // Floating animation
+        meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime + position[0]) * 0.2;
+    });
+
+    const geometry = useMemo(() => {
+        switch (shape) {
+            case 'octahedron': return <octahedronGeometry args={[1, 0]} />;
+            case 'dodecahedron': return <dodecahedronGeometry args={[1, 0]} />;
+            case 'icosahedron': return <icosahedronGeometry args={[1, 0]} />;
+            case 'tetrahedron': return <tetrahedronGeometry args={[1, 0]} />;
+            default: return <boxGeometry args={[1, 1, 1]} />;
+        }
+    }, [shape]);
+
+    return (
+        <mesh ref={meshRef} position={position} scale={scale}>
+            {geometry}
+            <meshPhysicalMaterial
+                color={color}
+                emissive={color}
+                emissiveIntensity={0.5}
+                metalness={0.9}
+                roughness={0.1}
+                transparent
+                opacity={0.6}
+                transmission={0.9}
+                thickness={0.5}
+                ior={1.5}
+                clearcoat={1}
+                clearcoatRoughness={0}
+            />
+        </mesh>
+    );
+}
+
+// Enhanced Particle System
+function EnergyTrails({ count = 600 }) {
+    const points = useRef();
 
     const particles = useMemo(() => {
-        const temp = new Float32Array(count * 3);
-        const randomProps = [];
+        const positions = new Float32Array(count * 3);
+        const colors = new Float32Array(count * 3);
+        const sizes = new Float32Array(count);
+
         for (let i = 0; i < count; i++) {
             const i3 = i * 3;
-            // Initial positions in a sphere-like distribution
-            const r = 10 + Math.random() * 10;
-            const theta = Math.random() * Math.PI * 2;
-            const phi = Math.acos(2 * Math.random() - 1);
+            const angle = Math.random() * Math.PI * 2;
+            const radius = 5 + Math.random() * 15;
 
-            temp[i3] = r * Math.sin(phi) * Math.cos(theta);
-            temp[i3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-            temp[i3 + 2] = r * Math.cos(phi);
+            positions[i3] = Math.cos(angle) * radius;
+            positions[i3 + 1] = (Math.random() - 0.5) * 20;
+            positions[i3 + 2] = Math.sin(angle) * radius;
 
-            randomProps.push({
-                speed: 0.1 + Math.random() * 0.5,
-                factor: 0.5 + Math.random() * 1.5,
-                offset: Math.random() * 100,
-                basePos: [temp[i3], temp[i3 + 1], temp[i3 + 2]]
-            });
+            const t = Math.random();
+            colors[i3] = 0 + t * 0.5;
+            colors[i3 + 1] = 0.77 - t * 0.3;
+            colors[i3 + 2] = 1;
+
+            sizes[i] = Math.random() * 0.1 + 0.03;
         }
-        return { positions: temp, props: randomProps };
+
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+        geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+        return geometry;
     }, [count]);
 
     useFrame((state) => {
-        if (!mesh.current) return;
+        if (!points.current) return;
+        points.current.rotation.y = state.clock.getElapsedTime() * 0.05;
 
-        const time = state.clock.getElapsedTime();
-        const positions = mesh.current.geometry.attributes.position.array;
-
-        for (let i = 0; i < count; i++) {
-            const i3 = i * 3;
-            const { speed, factor, offset, basePos } = particles.props[i];
-
-            // Organic movement logic
-            const t = time * speed + offset;
-
-            // Mouse interaction
-            const mouseX = (mouse.x * viewport.width) / 2;
-            const mouseY = (mouse.y * viewport.height) / 2;
-
-            // Calculate distance to mouse for interaction
-            const dx = positions[i3] - mouseX;
-            const dy = positions[i3 + 1] - mouseY;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            const mouseInfluence = Math.max(0, 5 - dist) * 0.5;
-
-            // Update positions with wave motion + mouse influence
-            positions[i3] = basePos[0] + Math.sin(t) * factor + (Math.sin(t * 0.5) * 2) - (dx / dist) * mouseInfluence;
-            positions[i3 + 1] = basePos[1] + Math.cos(t * 0.8) * factor + (Math.cos(t * 0.3) * 2) - (dy / dist) * mouseInfluence;
-            positions[i3 + 2] = basePos[2] + Math.sin(t * 0.3) * factor;
-        }
-
-        mesh.current.geometry.attributes.position.needsUpdate = true;
-
-        // Slowly rotate the entire system
-        mesh.current.rotation.y = time * 0.05;
-        mesh.current.rotation.z = time * 0.02;
+        const scale = 1 + Math.sin(state.clock.getElapsedTime() * 0.5) * 0.1;
+        points.current.scale.set(scale, scale, scale);
     });
 
     return (
-        <points ref={mesh}>
-            <bufferGeometry>
-                <bufferAttribute
-                    attach="attributes-position"
-                    count={particles.positions.length / 3}
-                    array={particles.positions}
-                    itemSize={3}
-                />
-            </bufferGeometry>
+        <points ref={points} geometry={particles}>
             <pointsMaterial
-                size={0.15}
-                color="#00C6FF"
-                sizeAttenuation={true}
-                transparent={true}
+                size={0.05}
+                vertexColors
+                transparent
                 opacity={0.8}
+                sizeAttenuation
                 blending={THREE.AdditiveBlending}
             />
         </points>
     );
 }
 
-function ConnectionLines({ count = 50 }) {
-    // A simpler secondary layer for "connections"
-    const linesRef = useRef();
-
-    useFrame((state) => {
-        if (linesRef.current) {
-            linesRef.current.rotation.x = state.clock.getElapsedTime() * 0.02;
-            linesRef.current.rotation.y = state.clock.getElapsedTime() * 0.03;
-        }
-    });
-
-    const points = useMemo(() => {
-        const p = [];
-        for (let i = 0; i < count; i++) {
-            const x = (Math.random() - 0.5) * 30;
-            const y = (Math.random() - 0.5) * 30;
-            const z = (Math.random() - 0.5) * 30;
-            p.push(new THREE.Vector3(x, y, z));
-        }
-        return p;
+// Fragment Field Generator
+function FragmentField({ count = 18 }) {
+    const fragments = useMemo(() => {
+        const shapes = ['octahedron', 'dodecahedron', 'icosahedron', 'tetrahedron'];
+        const colors = ['#00C6FF', '#8B5CF6', '#FF0080', '#00FF88'];
+        return Array.from({ length: count }, () => ({
+            position: [
+                (Math.random() - 0.5) * 20,
+                (Math.random() - 0.5) * 20,
+                (Math.random() - 0.5) * 10
+            ],
+            shape: shapes[Math.floor(Math.random() * shapes.length)],
+            color: colors[Math.floor(Math.random() * colors.length)],
+            scale: 0.3 + Math.random() * 1.2,
+            rotationSpeed: 0.2 + Math.random() * 0.8
+        }));
     }, [count]);
 
     return (
-        <group ref={linesRef}>
-            {points.map((point, i) => (
-                <mesh key={i} position={point}>
-                    <sphereGeometry args={[0.05, 8, 8]} />
-                    <meshBasicMaterial color="#0072FF" transparent opacity={0.4} />
-                </mesh>
+        <group>
+            {fragments.map((fragment, i) => (
+                <HolographicShape
+                    key={i}
+                    position={fragment.position}
+                    shape={fragment.shape}
+                    color={fragment.color}
+                    scale={fragment.scale}
+                    rotationSpeed={fragment.rotationSpeed}
+                />
             ))}
         </group>
-    )
+    );
 }
 
 const Background = () => {
+    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+    useEffect(() => {
+        const handleMouseMove = (e) => {
+            setMousePosition({
+                x: (e.clientX / window.innerWidth) * 2 - 1,
+                y: -(e.clientY / window.innerHeight) * 2 + 1,
+            });
+        };
+
+        window.addEventListener('mousemove', handleMouseMove);
+        return () => window.removeEventListener('mousemove', handleMouseMove);
+    }, []);
+
     return (
         <div
             style={{
@@ -133,27 +161,39 @@ const Background = () => {
                 width: '100%',
                 height: '100%',
                 zIndex: -1,
-                background: 'radial-gradient(ellipse at top, #0f0c29 0%, #302b63 50%, #24243e 100%)',
+                background: 'radial-gradient(circle at center, #050510 0%, #000000 100%)',
             }}
         >
-            <div style={{
-                position: 'absolute',
-                top: 0, left: 0, right: 0, bottom: 0,
-                background: 'rgba(0,0,0,0.7)',
-                zIndex: 0
-            }} />
+            <Canvas
+                dpr={[1, 2]}
+                camera={{ position: [0, 0, 12], fov: 60 }}
+                gl={{
+                    antialias: true,
+                    alpha: true,
+                    toneMapping: THREE.ACESFilmicToneMapping,
+                    toneMappingExposure: 1.2
+                }}
+            >
+                <color attach="background" args={['#000000']} />
+                <fog attach="fog" args={['#000000', 5, 25]} />
 
-            <Canvas dpr={[1, 2]} gl={{ antialias: true, alpha: true }} camera={{ position: [0, 0, 20], fov: 60 }}>
-                <fog attach="fog" args={['#0f0c29', 10, 60]} />
+                <ambientLight intensity={0.3} />
+                <pointLight position={[10, 10, 10]} intensity={50} color="#00C6FF" />
+                <pointLight position={[-10, -10, -10]} intensity={50} color="#8B5CF6" />
+                <spotLight
+                    position={[0, 15, 0]}
+                    angle={0.5}
+                    penumbra={0.5}
+                    intensity={30}
+                    color="#ffffff"
+                    castShadow
+                />
 
-                <ambientLight intensity={0.5} />
-                <pointLight position={[10, 10, 10]} intensity={1.5} color="#0072FF" />
-
-                <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={1} />
-                <NeuralFlux count={1500} />
-                <ConnectionLines count={30} />
+                <FragmentField count={20} />
+                <EnergyTrails count={700} />
             </Canvas>
 
+            {/* Vignette overlay */}
             <div
                 style={{
                     position: 'absolute',
@@ -161,9 +201,26 @@ const Background = () => {
                     left: 0,
                     right: 0,
                     bottom: 0,
-                    background: 'radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 0.8) 100%)',
+                    background: 'radial-gradient(circle at center, transparent 20%, rgba(0, 0, 0, 0.5) 100%)',
                     pointerEvents: 'none',
                     zIndex: 1
+                }}
+            />
+
+            {/* Mouse-following glow */}
+            <div
+                style={{
+                    position: 'absolute',
+                    left: `${(mousePosition.x + 1) * 50}%`,
+                    top: `${(-mousePosition.y + 1) * 50}%`,
+                    width: '400px',
+                    height: '400px',
+                    background: 'radial-gradient(circle, rgba(0, 198, 255, 0.15) 0%, transparent 70%)',
+                    transform: 'translate(-50%, -50%)',
+                    pointerEvents: 'none',
+                    filter: 'blur(60px)',
+                    transition: 'all 0.3s ease-out',
+                    zIndex: 2,
                 }}
             />
         </div>

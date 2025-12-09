@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, Shield, FileText, Lock, AlertCircle, HelpCircle } from "lucide-react";
+import Tilt from 'react-parallax-tilt';
 
 export default function TermsPage({ onBack, styles, responsiveStyles }) {
     const sections = [
@@ -142,64 +143,71 @@ export default function TermsPage({ onBack, styles, responsiveStyles }) {
 
                 <div style={{ display: "grid", gap: "2rem" }}>
                     {sections.map((section, index) => (
-                        <motion.div
+                        <Tilt
                             key={index}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: index * 0.1 }}
-                            style={{
-                                background: "rgba(255, 255, 255, 0.03)",
-                                backdropFilter: "blur(10px)",
-                                border: "1px solid rgba(255, 255, 255, 0.05)",
-                                borderRadius: "20px",
-                                padding: "2rem",
-                                transition: "all 0.3s ease",
-                                cursor: "default"
-                            }}
-                            onMouseEnter={(e) => {
-                                e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)";
-                                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
-                                e.currentTarget.style.transform = "translateY(-2px)";
-                            }}
-                            onMouseLeave={(e) => {
-                                e.currentTarget.style.background = "rgba(255, 255, 255, 0.03)";
-                                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.05)";
-                                e.currentTarget.style.transform = "translateY(0)";
-                            }}
+                            tiltMaxAngleX={5}
+                            tiltMaxAngleY={5}
+                            perspective={1000}
+                            scale={1.02}
+                            transitionSpeed={1500}
                         >
-                            <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1rem" }}>
-                                <div style={{
-                                    padding: "0.5rem",
-                                    background: "rgba(0, 198, 255, 0.1)",
-                                    borderRadius: "10px",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center"
-                                }}>
-                                    {section.icon}
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: index * 0.1 }}
+                                style={{
+                                    background: "rgba(255, 255, 255, 0.03)",
+                                    backdropFilter: "blur(10px)",
+                                    border: "1px solid rgba(255, 255, 255, 0.05)",
+                                    borderRadius: "20px",
+                                    padding: "2rem",
+                                    transition: "all 0.3s ease",
+                                    cursor: "default",
+                                    height: "100%" // Ensure consistent height
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)";
+                                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.03)";
+                                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.05)";
+                                }}
+                            >
+                                <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1rem" }}>
+                                    <div style={{
+                                        padding: "0.5rem",
+                                        background: "rgba(0, 198, 255, 0.1)",
+                                        borderRadius: "10px",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center"
+                                    }}>
+                                        {section.icon}
+                                    </div>
+                                    <h2 style={{
+                                        fontSize: "1.5rem",
+                                        fontWeight: "600",
+                                        color: "#fff",
+                                        margin: 0
+                                    }}>
+                                        {section.title}
+                                    </h2>
                                 </div>
-                                <h2 style={{
-                                    fontSize: "1.5rem",
-                                    fontWeight: "600",
-                                    color: "#fff",
-                                    margin: 0
+                                <div style={{
+                                    fontSize: "1.05rem",
+                                    lineHeight: "1.7",
+                                    color: "rgba(255, 255, 255, 0.7)",
+                                    paddingLeft: "3.5rem"
                                 }}>
-                                    {section.title}
-                                </h2>
-                            </div>
-                            <div style={{
-                                fontSize: "1.05rem",
-                                lineHeight: "1.7",
-                                color: "rgba(255, 255, 255, 0.7)",
-                                paddingLeft: "3.5rem"
-                            }}>
-                                {typeof section.content === 'string' ? (
-                                    <p style={{ margin: 0 }}>{section.content}</p>
-                                ) : (
-                                    section.content
-                                )}
-                            </div>
-                        </motion.div>
+                                    {typeof section.content === 'string' ? (
+                                        <p style={{ margin: 0 }}>{section.content}</p>
+                                    ) : (
+                                        section.content
+                                    )}
+                                </div>
+                            </motion.div>
+                        </Tilt>
                     ))}
                 </div>
             </motion.div>

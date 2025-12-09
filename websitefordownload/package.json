@@ -10,8 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.2",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.4.2",
+    "@studio-freight/lenis": "^1.0.42",
     "@supabase/supabase-js": "^2.55.0",
     "@tailwindcss/vite": "^4.1.12",
     "@vercel/analytics": "^1.5.0",
@@ -19,6 +21,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.12",
+    "gsap": "^3.13.0",
     "lucide-react": "^0.540.0",
     "ogl": "^1.0.11",
     "react": "^19.1.1",

@@ -20,6 +20,17 @@ import SuccessPopup from "./components/SuccessPopup";
 import { styles, getResponsiveStyles } from "./styles";
 
 import CustomCursor from "./components/CustomCursor";
+import ScrollProgress from "./components/ScrollProgress";
+import LoadingScreen from "./components/LoadingScreen";
+import InteractiveTimeline from "./components/InteractiveTimeline";
+import ScrollAnimation from "./components/ScrollAnimation";
+import ParallaxBackground from "./components/ParallaxBackground";
+import ScrollReveal from "./components/ScrollReveal";
+import { useSmoothScroll } from "./hooks/useSmoothScroll";
+import CursorLight from "./components/CursorLight";
+import Metaballs from "./components/Metaballs";
+import FogLayers from "./components/FogLayers";
+import DepthOfField from "./components/DepthOfField";
 
 export default function App() {
   const features = [
@@ -77,8 +88,9 @@ export default function App() {
   const [showSecurityPage, setShowSecurityPage] = useState(false);
   const [showRoadmapPage, setShowRoadmapPage] = useState(false);
   const [showPrivacyPolicyPage, setShowPrivacyPolicyPage] = useState(false);
-  const [showLogoAnimation, setShowLogoAnimation] = useState(true);
+  const [showLogoAnimation, setShowLogoAnimation] = useState(false); // Disabled - loading screen handles this
   const [showMainContent, setShowMainContent] = useState(false);
+  const [showLoadingScreen, setShowLoadingScreen] = useState(true);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -124,6 +136,9 @@ export default function App() {
       document.head.removeChild(styleElement);
     };
   }, []);
+
+  // Initialize smooth scroll
+  useSmoothScroll();
 
   const responsiveStyles = useMemo(() => getResponsiveStyles(isMobileView), [isMobileView]);
 
@@ -259,10 +274,25 @@ This submission was also saved locally in the browser.
 
   return (
     <>
-      <CustomCursor />
-      <Background />
-      <style>
-        {`
+      {/* Loading Screen */}
+      {showLoadingScreen && (
+        <LoadingScreen onComplete={() => setShowLoadingScreen(false)} />
+      )}
+
+      {/* Phase 4: Background Effects */}
+      <CursorLight />
+      <Metaballs />
+      <FogLayers />
+      <DepthOfField />
+
+      {/* Main App Content */}
+      {!showLoadingScreen && (
+        <>
+          <ScrollProgress />
+          <CustomCursor />
+          <Background />
+          <style>
+            {`
           @keyframes logoMove {
             0% {
               transform: translate(-100vw, -100vh) scale(0.3);
@@ -278,131 +308,141 @@ This submission was also saved locally in the browser.
             }
           }
         `}
-      </style>
+          </style>
 
-      <LogoAnimation showLogoAnimation={showLogoAnimation} styles={styles} />
+          <LogoAnimation showLogoAnimation={showLogoAnimation} styles={styles} />
 
-      {!showTermsPage && (
-        <Header
-          styles={styles}
-          responsiveStyles={responsiveStyles}
-          isMobileView={isMobileView}
-          mobileMenuOpen={mobileMenuOpen}
-          toggleMobileMenu={toggleMobileMenu}
-          closeMobileMenu={closeMobileMenu}
-          setShowPopup={setShowPopup}
-          setShowDocsPage={setShowDocsPage}
-          setShowFeaturesPage={setShowFeaturesPage}
-          setShowSecurityPage={setShowSecurityPage}
-          setShowRoadmapPage={setShowRoadmapPage}
-        />
-      )}
-
-      {/* Main App Content */}
-      <div style={{
-        ...styles.mainContentContainer,
-        ...(showMainContent && {
-          opacity: 1,
-          transform: "translateY(0)",
-        }),
-      }}>
-        <div style={styles.container}>
-
-          {/* Show Docs Page, Terms Page, Product Pages, or Main Content */}
-          {showDocsPage ? (
-            <DocsPage onBack={() => setShowDocsPage(false)} />
-          ) : showTermsPage ? (
-            <TermsPage
-              onBack={() => setShowTermsPage(false)}
+          {!showTermsPage && (
+            <Header
               styles={styles}
               responsiveStyles={responsiveStyles}
+              isMobileView={isMobileView}
+              mobileMenuOpen={mobileMenuOpen}
+              toggleMobileMenu={toggleMobileMenu}
+              closeMobileMenu={closeMobileMenu}
+              setShowPopup={setShowPopup}
+              setShowDocsPage={setShowDocsPage}
+              setShowFeaturesPage={setShowFeaturesPage}
+              setShowSecurityPage={setShowSecurityPage}
+              setShowRoadmapPage={setShowRoadmapPage}
             />
-          ) : showFeaturesPage ? (
-            <FeaturesPage onBack={() => setShowFeaturesPage(false)} />
-          ) : showSecurityPage ? (
-            <SecurityPage onBack={() => setShowSecurityPage(false)} />
-          ) : showRoadmapPage ? (
-            <RoadmapPage onBack={() => setShowRoadmapPage(false)} />
-          ) : showPrivacyPolicyPage ? (
-            <PrivacyPolicyPage onBack={() => setShowPrivacyPolicyPage(false)} />
-          ) : (
-            <>
-              {/* MAIN CONTENT */}
-              <div style={styles.contentWrapper}>
-                <Hero
-                  styles={styles}
-                  responsiveStyles={responsiveStyles}
-                  setShowPopup={setShowPopup}
-                />
-
-                <Features
-                  styles={styles}
-                  responsiveStyles={responsiveStyles}
-                  features={features}
-                  hoveredIndex={hoveredIndex}
-                  setHoveredIndex={setHoveredIndex}
-                />
-
-                <EncryptionTool />
-
-                <SecondFeatures
-                  styles={styles}
-                  responsiveStyles={responsiveStyles}
-                  secondFeatures={secondFeatures}
-                  hoveredSecondIndex={hoveredSecondIndex}
-                  setHoveredSecondIndex={setHoveredSecondIndex}
-                />
-
-                <ReviewSection />
-
-                <Footer
-                  styles={styles}
-                  responsiveStyles={responsiveStyles}
-                  onOpenTerms={() => {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                    setShowTermsPage(true);
-                  }}
-                  onOpenFeatures={() => {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                    setShowFeaturesPage(true);
-                  }}
-                  onOpenSecurity={() => {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                    setShowSecurityPage(true);
-                  }}
-                  onOpenRoadmap={() => {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                    setShowRoadmapPage(true);
-                  }}
-                  onOpenPrivacyPolicy={() => {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                    setShowPrivacyPolicyPage(true);
-                  }}
-                />
-              </div>
-            </>
           )}
 
-        </div>
-      </div>
+          {/* Main App Content */}
+          <div style={{
+            ...styles.mainContentContainer,
+            ...(showMainContent && {
+              opacity: 1,
+              transform: "translateY(0)",
+            }),
+          }}>
+            <div style={styles.container}>
 
-      <PopupForm
-        styles={styles}
-        responsiveStyles={responsiveStyles}
-        showPopup={showPopup}
-        handleClosePopup={handleClosePopup}
-        handleSubmit={handleSubmit}
-        formData={formData}
-        handleInputChange={handleInputChange}
-        inputFocusStyle={inputFocusStyle}
-      />
+              {/* Show Docs Page, Terms Page, Product Pages, or Main Content */}
+              {showDocsPage ? (
+                <DocsPage onBack={() => setShowDocsPage(false)} />
+              ) : showTermsPage ? (
+                <TermsPage
+                  onBack={() => setShowTermsPage(false)}
+                  styles={styles}
+                  responsiveStyles={responsiveStyles}
+                />
+              ) : showFeaturesPage ? (
+                <FeaturesPage onBack={() => setShowFeaturesPage(false)} />
+              ) : showSecurityPage ? (
+                <SecurityPage onBack={() => setShowSecurityPage(false)} />
+              ) : showRoadmapPage ? (
+                <RoadmapPage onBack={() => setShowRoadmapPage(false)} />
+              ) : showPrivacyPolicyPage ? (
+                <PrivacyPolicyPage onBack={() => setShowPrivacyPolicyPage(false)} />
+              ) : (
+                <>
+                  {/* MAIN CONTENT */}
+                  <div style={styles.contentWrapper}>
+                    <Hero
+                      styles={styles}
+                      responsiveStyles={responsiveStyles}
+                      setShowPopup={setShowPopup}
+                    />
 
-      <SuccessPopup
-        styles={styles}
-        showSuccessPopup={showSuccessPopup}
-        setShowSuccessPopup={setShowSuccessPopup}
-        isMobileView={isMobileView}
-      />
+                    {/* AnimatedStats removed per user request */}
+
+                    <Features
+                      styles={styles}
+                      responsiveStyles={responsiveStyles}
+                      features={features}
+                      hoveredIndex={hoveredIndex}
+                      setHoveredIndex={setHoveredIndex}
+                    />
+
+                    <ScrollReveal direction="up" delay={0.1}>
+                      <EncryptionTool />
+                    </ScrollReveal>
+
+                    {/* InteractiveTimeline removed to eliminate gap */}
+
+                    <SecondFeatures
+                      styles={styles}
+                      responsiveStyles={responsiveStyles}
+                      secondFeatures={secondFeatures}
+                      hoveredSecondIndex={hoveredSecondIndex}
+                      setHoveredSecondIndex={setHoveredSecondIndex}
+                    />
+
+                    <ScrollReveal direction="up" delay={0.1}>
+                      <ReviewSection />
+                    </ScrollReveal>
+
+                    <Footer
+                      styles={styles}
+                      responsiveStyles={responsiveStyles}
+                      onOpenTerms={() => {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        setShowTermsPage(true);
+                      }}
+                      onOpenFeatures={() => {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        setShowFeaturesPage(true);
+                      }}
+                      onOpenSecurity={() => {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        setShowSecurityPage(true);
+                      }}
+                      onOpenRoadmap={() => {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        setShowRoadmapPage(true);
+                      }}
+                      onOpenPrivacyPolicy={() => {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        setShowPrivacyPolicyPage(true);
+                      }}
+                    />
+                  </div>
+                </>
+              )}
+
+            </div>
+          </div>
+
+          <PopupForm
+            styles={styles}
+            responsiveStyles={responsiveStyles}
+            showPopup={showPopup}
+            handleClosePopup={handleClosePopup}
+            handleSubmit={handleSubmit}
+            formData={formData}
+            handleInputChange={handleInputChange}
+            inputFocusStyle={inputFocusStyle}
+          />
+
+          <SuccessPopup
+            styles={styles}
+            showSuccessPopup={showSuccessPopup}
+            setShowSuccessPopup={setShowSuccessPopup}
+            isMobileView={isMobileView}
+          />
+        </>
+      )}
     </>
   );
 }

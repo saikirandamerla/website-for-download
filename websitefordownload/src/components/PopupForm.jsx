@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { X, ChevronRight, ChevronLeft, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import AnimatedInput from './AnimatedInput';
+import RippleButton from './RippleButton';
 
 const PopupForm = ({
     styles,
@@ -170,36 +172,23 @@ const PopupForm = ({
                                     transition={{ x: { type: "spring", stiffness: 300, damping: 30 }, opacity: { duration: 0.2 } }}
                                     style={{ position: 'absolute', width: '100%' }}
                                 >
-                                    <div style={styles.formGroup}>
-                                        <label style={styles.formLabel} htmlFor="name">Full Name</label>
-                                        <input
-                                            type="text"
-                                            id="name"
-                                            name="name"
-                                            value={formData.name}
-                                            onChange={handleInputChange}
-                                            style={getInputStyle('name')}
-                                            onFocus={() => setFocusedInput('name')}
-                                            onBlur={() => setFocusedInput(null)}
-                                            required
-                                            placeholder="John Doe"
-                                        />
-                                    </div>
-                                    <div style={styles.formGroup}>
-                                        <label style={styles.formLabel} htmlFor="email">Email Address</label>
-                                        <input
-                                            type="email"
-                                            id="email"
-                                            name="email"
-                                            value={formData.email}
-                                            onChange={handleInputChange}
-                                            style={getInputStyle('email')}
-                                            onFocus={() => setFocusedInput('email')}
-                                            onBlur={() => setFocusedInput(null)}
-                                            required
-                                            placeholder="john@example.com"
-                                        />
-                                    </div>
+                                    <AnimatedInput
+                                        label="Full Name"
+                                        type="text"
+                                        name="name"
+                                        value={formData.name}
+                                        onChange={handleInputChange}
+                                        required
+                                        style={{ marginBottom: '1.5rem' }}
+                                    />
+                                    <AnimatedInput
+                                        label="Email Address"
+                                        type="email"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
                                 </motion.div>
                             )}
 
@@ -352,8 +341,7 @@ const PopupForm = ({
                         )}
 
                         {currentStep < totalSteps ? (
-                            <button
-                                type="button"
+                            <RippleButton
                                 onClick={handleNext}
                                 disabled={!isStepValid}
                                 style={{
@@ -362,14 +350,19 @@ const PopupForm = ({
                                     width: 'auto',
                                     opacity: isStepValid ? 1 : 0.5,
                                     cursor: isStepValid ? 'pointer' : 'not-allowed',
-                                    filter: isStepValid ? 'none' : 'grayscale(100%)'
+                                    filter: isStepValid ? 'none' : 'grayscale(100%)',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '0.5rem',
+                                    whiteSpace: 'nowrap',
                                 }}
                             >
                                 Next <ChevronRight size={18} />
-                            </button>
+                            </RippleButton>
                         ) : (
-                            <button
-                                type="submit"
+                            <RippleButton
+                                onClick={handleSubmit}
                                 disabled={!isStepValid}
                                 style={{
                                     ...styles.gradientButton,
@@ -381,7 +374,7 @@ const PopupForm = ({
                                 }}
                             >
                                 Join Now
-                            </button>
+                            </RippleButton>
                         )}
                     </div>
                 </form>
